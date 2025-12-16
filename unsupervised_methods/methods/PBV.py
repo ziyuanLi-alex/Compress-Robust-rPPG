@@ -27,7 +27,10 @@ def PBV(frames):
     C = np.swapaxes(np.array([signal_norm_r, signal_norm_g, signal_norm_b]), 0, 1)
     Ct = np.swapaxes(np.swapaxes(np.transpose(C), 0, 2), 1, 2)
     Q = np.matmul(C, Ct)
-    W = np.linalg.solve(Q, np.swapaxes(pbv, 0, 1))
+    # print(f"DEBUG: Q shape: {Q.shape}")
+    # print(f"DEBUG: pbv shape: {pbv.shape}")
+    # print(f"DEBUG: swapped pbv shape: {np.swapaxes(pbv, 0, 1).shape}")
+    W = np.linalg.solve(Q, np.swapaxes(pbv, 0, 1)[..., np.newaxis]).squeeze(-1)
 
     A = np.matmul(Ct, np.expand_dims(W, axis=2))
     B = np.matmul(np.swapaxes(np.expand_dims(pbv.T, axis=2), 1, 2), np.expand_dims(W, axis=2))
@@ -50,7 +53,7 @@ def PBV2(frames):
     Ct = np.transpose(RGB_array, (1, 2, 0))
 
     Q = np.matmul(C, Ct)
-    W = np.linalg.solve(Q, np.swapaxes(PBV, 0, 1))
+    W = np.linalg.solve(Q, np.swapaxes(PBV, 0, 1)[..., np.newaxis]).squeeze(-1)
 
     Numerator = np.matmul(Ct, np.expand_dims(W, axis=2))
     Denominator = np.matmul(np.swapaxes(np.expand_dims(PBV.T, axis=2), 1, 2), np.expand_dims(W, axis=2))
