@@ -66,10 +66,8 @@ class BaseLoader(Dataset):
         self.do_preprocess = config_data.DO_PREPROCESS
         self.config_data = config_data
 
-        if self.do_preprocess:
-            from dataset.data_loader.face_detector.YOLO5Face import YOLO5Face
-            if 'Y5F' in self.config_data.PREPROCESS.CROP_FACE.BACKEND:
-                self.Y5FObj = YOLO5Face(self.config_data.PREPROCESS.CROP_FACE.BACKEND, device)
+        self.device = device
+        self.Y5FObj = None
 
         assert (config_data.BEGIN < config_data.END)
         assert (config_data.BEGIN > 0 or config_data.BEGIN == 0)
@@ -312,6 +310,9 @@ class BaseLoader(Dataset):
             # Use a YOLO5Face trained on WiderFace dataset
             # This utilizes both the CPU and GPU
 
+            if self.Y5FObj is None:
+                from dataset.data_loader.face_detector.YOLO5Face import YOLO5Face
+                self.Y5FObj = YOLO5Face(self.config_data.PREPROCESS.CROP_FACE.BACKEND, self.device)
             res = self.Y5FObj.detect_face(frame[:, :, :3].astype(np.uint8))
 
             if res != None:
