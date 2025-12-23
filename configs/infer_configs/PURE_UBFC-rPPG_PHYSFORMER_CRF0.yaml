@@ -5,7 +5,7 @@ TEST:
   USE_LAST_EPOCH: False                     # to use provided validation dataset to find the best epoch, should be false
   DATA:
     FS: 30
-    DATASET: UBFC-rPPG
+    DATASET: UBFC-rPPG-h264
     DO_PREPROCESS: True                    # if first time, should be true
     DATA_FORMAT: NCDHW
     DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"                     # Raw dataset path, need to be updated
