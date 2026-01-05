@@ -2,12 +2,13 @@
 
 # Function to display usage
 usage() {
-    echo "Usage: $0 --config <path_to_config> --start_crf <start_val> --end_crf <end_val> --step_crf <step_val> [--output_dir <output_directory>]"
-    echo "Example: $0 --config configs/infer_configs/PURE_UBFC-rPPG_PHYSFORMER_BASIC.yaml --start_crf 24 --end_crf 24 --step_crf 1 --output_dir configs/infer_configs/generated"
+    echo "Usage: $0 --config <path_to_config> --start_crf <start_val> --end_crf <end_val> --step_crf <step_val> [--output_dir <output_directory>] [--include_crf0]"
+    echo "Example: $0 --config configs/infer_configs/PURE_UBFC-rPPG_PHYSFORMER_BASIC.yaml --start_crf 24 --end_crf 24 --step_crf 1 --include_crf0"
     exit 1
 }
 
 output_dir=""
+include_crf0=false
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
@@ -17,6 +18,7 @@ while [[ "$#" -gt 0 ]]; do
         --end_crf) end_crf="$2"; shift ;;
         --step_crf) step_crf="$2"; shift ;;
         --output_dir) output_dir="$2"; shift ;;
+        --include_crf0) include_crf0=true ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac
     shift
@@ -41,8 +43,18 @@ fi
 mkdir -p "$output_dir"
 echo "Output directory: $output_dir"
 
-# Loop through CRF values
+# Build list of CRFs to process
+crf_values=()
+if [ "$include_crf0" = true ]; then
+    crf_values+=(0)
+fi
+
 for (( crf=start_crf; crf<=end_crf; crf+=step_crf )); do
+    crf_values+=($crf)
+done
+
+# Loop through CRF values
+for crf in "${crf_values[@]}"; do
     echo "Generating config for CRF: $crf"
     
     # Determine new filename
