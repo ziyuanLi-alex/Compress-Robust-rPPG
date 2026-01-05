@@ -65,32 +65,39 @@ class UBFCrPPGh264Loader(BaseLoader):
         return data_dirs_new
 
     def preprocess_dataset_subprocess(self, data_dirs, config_preprocess, i, file_list_dict):
+
         """ invoked by preprocess_dataset for multi_process."""
-        filename = os.path.split(data_dirs[i]['path'])[-1]
-        saved_filename = data_dirs[i]['index']
+        try:
+            filename = os.path.split(data_dirs[i]['path'])[-1]
+            saved_filename = data_dirs[i]['index']
 
-        # Read Frames
-        if 'None' in config_preprocess.DATA_AUG:
-            # Utilize dataset-specific function to read video
-            frames = self.read_video(
-                os.path.join(data_dirs[i]['path'],"vid.mp4"))
-        elif 'Motion' in config_preprocess.DATA_AUG:
-            # Utilize general function to read video in .npy format
-            frames = self.read_npy_video(
-                glob.glob(os.path.join(data_dirs[i]['path'],'*.npy')))
-        else:
-            raise ValueError(f'Unsupported DATA_AUG specified for {self.dataset_name} dataset! Received {config_preprocess.DATA_AUG}.')
+            # Read Frames
+            if 'None' in config_preprocess.DATA_AUG:
+                # Utilize dataset-specific function to read video
+                frames = self.read_video(
+                    os.path.join(data_dirs[i]['path'],"vid.mp4"))
+            elif 'Motion' in config_preprocess.DATA_AUG:
+                # Utilize general function to read video in .npy format
+                frames = self.read_npy_video(
+                    glob.glob(os.path.join(data_dirs[i]['path'],'*.npy')))
+            else:
+                raise ValueError(f'Unsupported DATA_AUG specified for {self.dataset_name} dataset! Received {config_preprocess.DATA_AUG}.')
 
-        # Read Labels
-        if config_preprocess.USE_PSUEDO_PPG_LABEL:
-            bvps = self.generate_pos_psuedo_labels(frames, fs=self.config_data.FS)
-        else:
-            bvps = self.read_wave(
-                os.path.join(data_dirs[i]['path'],"ground_truth.txt"))
-            
-        frames_clips, bvps_clips = self.preprocess(frames, bvps, config_preprocess)
-        input_name_list, label_name_list = self.save_multi_process(frames_clips, bvps_clips, saved_filename)
-        file_list_dict[i] = input_name_list
+            # Read Labels
+            if config_preprocess.USE_PSUEDO_PPG_LABEL:
+                bvps = self.generate_pos_psuedo_labels(frames, fs=self.config_data.FS)
+            else:
+                bvps = self.read_wave(
+                    os.path.join(data_dirs[i]['path'],"ground_truth.txt"))
+                
+            frames_clips, bvps_clips = self.preprocess(frames, bvps, config_preprocess)
+            input_name_list, label_name_list = self.save_multi_process(frames_clips, bvps_clips, saved_filename)
+            file_list_dict[i] = input_name_list
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            print(f"Error processing {data_dirs[i]['path']}: {e}")
+
 
     @staticmethod
     def read_video(video_file):

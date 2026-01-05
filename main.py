@@ -254,7 +254,7 @@ if __name__ == "__main__":
         # test_loader
         if config.TEST.DATA.DATASET == "UBFC-rPPG":
             test_loader = data_loader.UBFCrPPGLoader.UBFCrPPGLoader
-        if config.TEST.DATA.DATASET == "UBFC-rPPG-h264":
+        elif config.TEST.DATA.DATASET == "UBFC-rPPG-h264":
             test_loader = data_loader.UBFCrPPGh264Loader.UBFCrPPGh264Loader
         elif config.TEST.DATA.DATASET == "PURE":
             test_loader = data_loader.PURELoader.PURELoader
