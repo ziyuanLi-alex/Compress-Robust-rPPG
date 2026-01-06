@@ -104,7 +104,7 @@ def main():
                     if "MAE" in metric_full_name:
                         file_metrics['MAE'] = value
                         file_metrics['MAE_Std'] = std_dev
-                        extracted_any = Trueqq
+                        extracted_any = True
                     elif "RMSE" in metric_full_name:
                         file_metrics['RMSE'] = value
                         file_metrics['RMSE_Std'] = std_dev
