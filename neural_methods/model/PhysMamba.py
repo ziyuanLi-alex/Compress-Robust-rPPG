@@ -1,7 +1,8 @@
 import math
 import torch
 import torch.nn as nn
-from timm.models.layers import trunc_normal_, DropPath
+# from timm.models.layers import trunc_normal_, DropPath
+from timm.layers import trunc_normal_, DropPath
 from mamba_ssm import Mamba
 from torch.nn import functional as F
 
