@@ -123,7 +123,90 @@ class STVENTrainer(BaseTrainer):
                     tbar.set_description(f"Loss: {loss_total:.4f} (Rec: {loss_rec:.4f}, Cyc: {loss_cyc:.4f})")
 
             print(f"Epoch {epoch} Average Loss: {np.mean(epoch_total_loss):.4f}")
+            self.valid(data_loader)
             self.save_model(epoch)
+
+    def valid(self, data_loader):
+        """
+        Validation loop for STVEN.
+        """
+        if data_loader["valid"] is None:
+            raise ValueError("No data for valid")
+
+        print("==== STVEN Validation ====")
+        self.model.eval()
+        valid_loss = []
+        
+        with torch.no_grad():
+            tbar = tqdm(data_loader["valid"], ncols=80)
+            for idx, batch in enumerate(tbar):
+                compressed_vid, uncompressed_vid, bitrate_label = batch[0], batch[1], batch[2]
+                compressed_vid = compressed_vid.to(self.device).float()
+                uncompressed_vid = uncompressed_vid.to(self.device).float()
+                bitrate_label = bitrate_label.to(self.device).float()
+                
+                # 1. Create "Target 0" label (Uncompressed)
+                target_uncompressed_label = torch.zeros_like(bitrate_label)
+                target_uncompressed_label[:, 0] = 1.0
+
+                # --- PHASE 1: Enhancement ---
+                enhanced_vid = self.model(compressed_vid, target_uncompressed_label)
+
+                # --- PHASE 2: Cycle Consistency ---
+                reconstructed_compressed_vid = self.model(enhanced_vid, bitrate_label)
+
+                # --- PHASE 3: Loss Calculation ---
+                loss_rec_l1 = self.l1_loss(enhanced_vid, uncompressed_vid)
+                loss_rec_mse = self.mse_loss(enhanced_vid, uncompressed_vid)
+                loss_rec = loss_rec_mse + loss_rec_l1
+                
+                loss_cyc = self.l1_loss(reconstructed_compressed_vid, compressed_vid)
+                
+                total_loss = loss_rec + loss_cyc
+                valid_loss.append(total_loss.item())
+                
+                if idx % 10 == 0:
+                    tbar.set_description(f"Val Loss: {total_loss.item():.4f}")
+
+        avg_val_loss = np.mean(valid_loss)
+        print(f"Validation Average Loss: {avg_val_loss:.4f}")
+        return avg_val_loss
+
+    def test(self, data_loader):
+        """
+        Test loop for STVEN.
+        """
+        if data_loader["test"] is None:
+            raise ValueError("No data for test")
+
+        print("==== STVEN Testing ====")
+        self.model.eval()
+        test_loss = []
+        
+        with torch.no_grad():
+            tbar = tqdm(data_loader["test"], ncols=80)
+            for idx, batch in enumerate(tbar):
+                compressed_vid, uncompressed_vid, bitrate_label = batch[0], batch[1], batch[2]
+                compressed_vid = compressed_vid.to(self.device).float()
+                uncompressed_vid = uncompressed_vid.to(self.device).float()
+                bitrate_label = bitrate_label.to(self.device).float()
+                
+                target_uncompressed_label = torch.zeros_like(bitrate_label)
+                target_uncompressed_label[:, 0] = 1.0
+
+                enhanced_vid = self.model(compressed_vid, target_uncompressed_label)
+                reconstructed_compressed_vid = self.model(enhanced_vid, bitrate_label)
+
+                loss_rec_l1 = self.l1_loss(enhanced_vid, uncompressed_vid)
+                loss_rec_mse = self.mse_loss(enhanced_vid, uncompressed_vid)
+                loss_rec = loss_rec_mse + loss_rec_l1
+                
+                loss_cyc = self.l1_loss(reconstructed_compressed_vid, compressed_vid)
+                
+                total_loss = loss_rec + loss_cyc
+                test_loss.append(total_loss.item())
+
+        print(f"Test Average Loss: {np.mean(test_loss):.4f}")
 
     def save_model(self, index):
         if not os.path.exists(self.model_dir):

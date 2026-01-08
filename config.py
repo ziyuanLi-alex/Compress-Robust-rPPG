@@ -57,6 +57,8 @@ _C.TRAIN.DATA.DO_PREPROCESS = False
 _C.TRAIN.DATA.DATA_FORMAT = 'NDCHW'
 _C.TRAIN.DATA.BEGIN = 0.0
 _C.TRAIN.DATA.END = 1.0
+_C.TRAIN.DATA.CRF_DATASETS = CN(new_allowed=True)
+_C.TRAIN.DATA.CRF_LEVELS = [0]
 _C.TRAIN.DATA.FOLD = CN()
 _C.TRAIN.DATA.FOLD.FOLD_NAME = ''
 _C.TRAIN.DATA.FOLD.FOLD_PATH = ''
@@ -122,6 +124,8 @@ _C.VALID.DATA.DO_PREPROCESS = False
 _C.VALID.DATA.DATA_FORMAT = 'NDCHW'
 _C.VALID.DATA.BEGIN = 0.0
 _C.VALID.DATA.END = 1.0
+_C.VALID.DATA.CRF_DATASETS = CN(new_allowed=True)
+_C.VALID.DATA.CRF_LEVELS = [0]
 _C.VALID.DATA.FOLD = CN()
 _C.VALID.DATA.FOLD.FOLD_NAME = ''
 _C.VALID.DATA.FOLD.FOLD_PATH = ''
@@ -189,6 +193,8 @@ _C.TEST.DATA.DO_PREPROCESS = False
 _C.TEST.DATA.DATA_FORMAT = 'NDCHW'
 _C.TEST.DATA.BEGIN = 0.0
 _C.TEST.DATA.END = 1.0
+_C.TEST.DATA.CRF_DATASETS = CN(new_allowed=True)
+_C.TEST.DATA.CRF_LEVELS = [0]
 _C.TEST.DATA.FOLD = CN()
 _C.TEST.DATA.FOLD.FOLD_NAME = ''
 _C.TEST.DATA.FOLD.FOLD_PATH = ''
@@ -346,6 +352,17 @@ _C.MODEL.PHYSFORMER.FF_DIM = 144
 _C.MODEL.PHYSFORMER.NUM_HEADS = 4
 _C.MODEL.PHYSFORMER.NUM_LAYERS = 12
 _C.MODEL.PHYSFORMER.THETA = 0.7
+# -----------------------------------------------------------------------------
+# Model Settings for STVEN
+# -----------------------------------------------------------------------------
+_C.MODEL.STVEN = CN()
+_C.MODEL.STVEN.in_channels = 3
+_C.MODEL.STVEN.out_channels = 3
+_C.MODEL.STVEN.base_channels = 64
+_C.MODEL.STVEN.num_st_blocks = 6
+_C.MODEL.STVEN.frame_length = 64
+_C.MODEL.STVEN.use_bitrate_labels = False
+_C.MODEL.STVEN.num_bitrate_levels = 5
 
 # -----------------------------------------------------------------------------
 # Inference settings
