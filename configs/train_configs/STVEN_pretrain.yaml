@@ -1,9 +1,9 @@
 BASE: ['']
 TOOLBOX_MODE: "train_and_test"
 TRAIN:
-  BATCH_SIZE: 4
+  BATCH_SIZE: 8
   EPOCHS: 30
-  LR: 1e-4
+  LR: 1e-3
   MODEL_FILE_NAME: "STVEN_pretrain"
   PLOT_LOSSES_AND_LR: True
   DATA:
@@ -16,19 +16,20 @@ TRAIN:
       "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
       "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5" 
       "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10" 
-      "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15" 
-      "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20" 
-    CRF_LEVELS: [0, 5, 10, 15, 20]
+      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15" 
+      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20" 
+    # CRF_LEVELS: [0, 5, 10, 15, 20]
+    CRF_LEVELS: [0, 5, 10]
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.0
-    END: 0.8
+    END: 0.2
     PREPROCESS:
-      DATA_TYPE: ['Raw']
+      DATA_TYPE: ['Standardized']
       DATA_AUG: ['None']
       LABEL_TYPE: Raw
       DO_CHUNK: True
-      CHUNK_LENGTH: 64
+      CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
         BACKEND: 'Y5F'
@@ -39,32 +40,33 @@ TRAIN:
           DYNAMIC_DETECTION_FREQUENCY : 30
           USE_MEDIAN_FACE_BOX: False
       RESIZE:
-        H: 128
-        W: 128
+        H: 64
+        W: 64
 VALID:
   DATA:
     FS: 30
     DATASET: UBFC-rPPG
-    DO_PREPROCESS: False
+    DO_PREPROCESS: True
     DATA_FORMAT: NCDHW
     DATA_PATH: "/home/zyuanli/dev/lib/data"
     CRF_DATASETS:
       "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
       "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5" 
       "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10" 
-      "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15" 
-      "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20" 
-    CRF_LEVELS: [0, 5, 10, 15, 20]
+      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15" 
+      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20" 
+    # CRF_LEVELS: [0, 5, 10, 15, 20]
+    CRF_LEVELS: [0, 5, 10]
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
-    BEGIN: 0.8
-    END: 1.0
+    BEGIN: 0.9
+    END: 0.95
     PREPROCESS:
-      DATA_TYPE: [ 'Raw']
+      DATA_TYPE: ['Standardized']
       DATA_AUG: ['None']
-      LABEL_TYPE:  Raw
+      LABEL_TYPE: Raw
       DO_CHUNK: True
-      CHUNK_LENGTH: 64
+      CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
         BACKEND: 'Y5F'
@@ -75,33 +77,34 @@ VALID:
           DYNAMIC_DETECTION_FREQUENCY : 30
           USE_MEDIAN_FACE_BOX: False
       RESIZE:
-        H: 128
-        W: 128
+        H: 64
+        W: 64
 TEST:
   METRICS: ['MAE', 'RMSE', 'MAPE', 'Pearson', 'SNR', 'BA']
-  USE_LAST_EPOCH: True
+  USE_LAST_EPOCH: False
   DATA:
     FS: 30
     DATASET: UBFC-rPPG
-    DO_PREPROCESS: False
+    DO_PREPROCESS: True
     DATA_FORMAT: NCDHW
     DATA_PATH: "/home/zyuanli/dev/lib/data"
     CRF_DATASETS:
       "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
       "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5" 
       "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10" 
-      "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15" 
-      "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20" 
-    CRF_LEVELS: [0, 5, 10, 15, 20]
+      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15" 
+      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20" 
+    # CRF_LEVELS: [0, 5, 10, 15, 20]
+    CRF_LEVELS: [0, 5, 10]
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
-    BEGIN: 0.8
+    BEGIN: 0.95
     END: 1.0
     PREPROCESS:
-      DATA_TYPE: [ 'Raw']
+      DATA_TYPE: ['Standardized']
       LABEL_TYPE: Raw
       DO_CHUNK: True
-      CHUNK_LENGTH: 64
+      CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
         BACKEND: 'Y5F'
@@ -112,8 +115,8 @@ TEST:
           DYNAMIC_DETECTION_FREQUENCY : 30
           USE_MEDIAN_FACE_BOX: False
       RESIZE:
-        H: 128
-        W: 128
+        H: 64
+        W: 64
 DEVICE: cuda:0
 NUM_OF_GPU_TRAIN: 1
 LOG:
@@ -123,8 +126,8 @@ MODEL:
   STVEN:
     in_channels: 3
     out_channels: 3
-    base_channels: 64
-    num_st_blocks: 6
-    frame_length: 64
+    base_channels: 16
+    num_st_blocks: 2
+    frame_length: 160
     use_bitrate_labels: True
-    num_bitrate_levels: 5
+    num_bitrate_levels: 3

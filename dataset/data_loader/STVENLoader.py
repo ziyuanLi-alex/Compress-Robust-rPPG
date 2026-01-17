@@ -8,6 +8,7 @@ import re
 import numpy as np
 import cv2
 import torch
+import pandas as pd
 from dataset.data_loader.BaseLoader import BaseLoader
 
 class STVENLoader(BaseLoader):
@@ -46,7 +47,7 @@ class STVENLoader(BaseLoader):
             for data_dir in data_dirs:
                 subject_match = re.search('subject(\d+)', data_dir)
                 if subject_match:
-                    subject_index = subject_match.group(0)
+                    subject_index = subject_match.group(1)
                     dirs.append({
                         "index": subject_index, 
                         "path": data_dir,
@@ -63,18 +64,55 @@ class STVENLoader(BaseLoader):
         return dirs
 
     def split_raw_data(self, data_dirs, begin, end):
-        """Returns a subset of data dirs, split with begin and end values."""
+        """Returns a subset of data dirs, split with begin and end values.
+           Ensures that all CRF levels for the same subject stay in the same split.
+        """
         if begin == 0 and end == 1:
             return data_dirs
 
-        file_num = len(data_dirs)
-        choose_range = range(int(begin * file_num), int(end * file_num))
-        data_dirs_new = []
-
-        for i in choose_range:
-            data_dirs_new.append(data_dirs[i])
-
+        # Get unique subjects in original order (already sorted by subject index)
+        unique_subjects = []
+        for d in data_dirs:
+            if d['index'] not in unique_subjects:
+                unique_subjects.append(d['index'])
+        
+        num_subjects = len(unique_subjects)
+        start_idx = int(begin * num_subjects)
+        end_idx = int(end * num_subjects)
+        
+        chosen_subjects = unique_subjects[start_idx:end_idx]
+        
+        data_dirs_new = [d for d in data_dirs if d['index'] in chosen_subjects]
         return data_dirs_new
+
+    def build_file_list_retroactive(self, data_dirs, begin, end):
+        """Builds a list of files used by the dataloader for the data split.
+           Overridden to handle STVEN's _crf{level} naming convention.
+        """
+        # get data split based on begin and end indices.
+        data_dirs_subset = self.split_raw_data(data_dirs, begin, end)
+
+        # generate a list of unique raw-data file names
+        filename_list = []
+        for i in range(len(data_dirs_subset)):
+            filename_list.append(data_dirs_subset[i]['index'])
+        filename_list = list(set(filename_list))  # ensure all indexes are unique
+
+        # generate a list of all preprocessed / chunked data files
+        file_list = []
+        for fname in filename_list:
+            # Glob for any CRF level for this subject
+            processed_file_data = list(glob.glob(self.cached_path + os.sep + "{0}_crf*_input*.npy".format(fname)))
+            file_list += processed_file_data
+
+        if not file_list:
+            raise ValueError(self.dataset_name,
+                             'STVENLoader: File list empty. Check preprocessed data folder exists and is not empty. '
+                             f'Path: {self.cached_path} searching for: {filename_list}')
+
+        file_list_df = pd.DataFrame(file_list, columns=['input_files'])
+        os.makedirs(os.path.dirname(self.file_list_path), exist_ok=True)
+        file_list_df.to_csv(self.file_list_path)  # save file list to .csv
 
     def preprocess_dataset_subprocess(self, data_dirs, config_preprocess, i, file_list_dict):
         """Invoke by preprocess_dataset for multi_process."""
