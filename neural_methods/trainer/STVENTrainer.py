@@ -119,8 +119,7 @@ class STVENTrainer(BaseTrainer):
                 epoch_rec_loss.append(loss_rec)
                 epoch_cyc_loss.append(loss_cyc)
                 
-                if idx % 10 == 0:
-                    tbar.set_description(f"Loss: {loss_total:.4f} (Rec: {loss_rec:.4f}, Cyc: {loss_cyc:.4f})")
+                tbar.set_description(f"Loss: {loss_total:.4f} (Rec: {loss_rec:.4f}, Cyc: {loss_cyc:.4f})")
 
             print(f"Epoch {epoch} Average Loss: {np.mean(epoch_total_loss):.4f}")
             self.valid(data_loader)
@@ -131,7 +130,8 @@ class STVENTrainer(BaseTrainer):
         Validation loop for STVEN.
         """
         if data_loader["valid"] is None:
-            raise ValueError("No data for valid")
+            print("No data for valid, skipping...")
+            return None
 
         print("==== STVEN Validation ====")
         self.model.eval()
@@ -165,8 +165,7 @@ class STVENTrainer(BaseTrainer):
                 total_loss = loss_rec + loss_cyc
                 valid_loss.append(total_loss.item())
                 
-                if idx % 10 == 0:
-                    tbar.set_description(f"Val Loss: {total_loss.item():.4f}")
+                tbar.set_description(f"Val Loss: {total_loss.item():.4f}")
 
         avg_val_loss = np.mean(valid_loss)
         print(f"Validation Average Loss: {avg_val_loss:.4f}")
@@ -177,7 +176,8 @@ class STVENTrainer(BaseTrainer):
         Test loop for STVEN.
         """
         if data_loader["test"] is None:
-            raise ValueError("No data for test")
+            print("No data for test, skipping...")
+            return None
 
         print("==== STVEN Testing ====")
         self.model.eval()
@@ -205,6 +205,7 @@ class STVENTrainer(BaseTrainer):
                 
                 total_loss = loss_rec + loss_cyc
                 test_loss.append(total_loss.item())
+                tbar.set_description(f"Test Loss: {total_loss.item():.4f}")
 
         print(f"Test Average Loss: {np.mean(test_loss):.4f}")
 
