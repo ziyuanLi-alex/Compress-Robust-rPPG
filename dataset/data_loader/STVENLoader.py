@@ -133,14 +133,21 @@ class STVENLoader(BaseLoader):
             else:
                  raise ValueError(f'Unsupported DATA_AUG specified for {self.dataset_name}! Received {config_preprocess.DATA_AUG}.')
 
-            # Generate Dummy Labels (Since this is unsupervised/self-supervised pre-training)
-            # We create dummy BVP signals of the same length as frames
-            # This is to satisfy the BaseLoader interface
-            
-            # Note: frame rate fs is needed for length calculation if we were doing real labels, 
-            # but for dummy we just match frames length
-            num_frames = len(frames)
-            bvps = np.zeros(num_frames) 
+            # Read Labels
+            if config_preprocess.USE_PSUEDO_PPG_LABEL:
+                 bvps = self.generate_pos_psuedo_labels(frames, fs=self.config_data.FS)
+            else:
+                 # Try to read real ground truth if available
+                 gt_path = os.path.join(data_dirs[i]['path'], "ground_truth.txt")
+                 if os.path.exists(gt_path):
+                     bvps = self.read_wave(gt_path)
+                     # Resample if length mismatch (simple check)
+                     if len(bvps) != len(frames):
+                         bvps = BaseLoader.resample_ppg(bvps, len(frames))
+                 else:
+                     # Fallback to zeros if no GT found (strictly unsupervised)
+                     num_frames = len(frames)
+                     bvps = np.zeros(num_frames) 
 
             # Preprocess (Chunking, etc.)
             frames_clips, bvps_clips = self.preprocess(frames, bvps, config_preprocess)
@@ -166,6 +173,15 @@ class STVENLoader(BaseLoader):
             frames.append(frame)
             success, frame = VidObj.read()
         return np.asarray(frames)
+
+    @staticmethod
+    def read_wave(bvp_file):
+        """Reads a bvp signal file."""
+        with open(bvp_file, "r") as f:
+            str1 = f.read()
+            str1 = str1.split("\n")
+            bvp = [float(x) for x in str1[0].split()]
+        return np.asarray(bvp)
         
     def __getitem__(self, index):
         """Returns a triplet: (compressed_video, uncompressed_video, bitrate_label)."""
@@ -235,8 +251,11 @@ class STVENLoader(BaseLoader):
         bitrate_label = np.zeros(len(crf_levels), dtype=np.float32)
         bitrate_label[label_idx] = 1.0
 
-        # Note: We return 3 items, unlike BaseLoader which returns 4 (data, label, filename, chunk_id)
-        # The Trainer needs to be aware of this change or we stick to standard signature and pack it differently.
-        # Given STVENTrainer expects (compressed, uncompressed, label), we return exactly that.
-        
-        return compressed_data, uncompressed_data, bitrate_label
+        # Load BVP Label
+        # self.labels contains paths to processed label .npy files
+        label_path = self.labels[index]
+        bvp_label = np.load(label_path)
+        bvp_label = np.float32(bvp_label)
+
+        # Note: We return 4 items now.
+        return compressed_data, uncompressed_data, bitrate_label, bvp_label
