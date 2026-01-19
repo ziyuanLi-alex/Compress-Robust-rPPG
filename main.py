@@ -85,6 +85,8 @@ def train_and_test(config, data_loader_dict):
         model_trainer = trainer.RhythmFormerTrainer.RhythmFormerTrainer(config, data_loader_dict)
     elif config.MODEL.NAME == 'STVEN':
         model_trainer = trainer.STVENTrainer.STVENTrainer(config, data_loader_dict)
+    elif config.MODEL.NAME == 'JointSTPhys':
+        model_trainer = trainer.JointSTVENPhysFormerTrainer.JointSTVENPhysFormerTrainer(config, data_loader_dict)
     else:
         raise ValueError('Your Model is Not Supported  Yet!')
     model_trainer.train(data_loader_dict)
@@ -158,8 +160,8 @@ if __name__ == "__main__":
     data_loader_dict = dict() # dictionary of data loaders 
     if config.TOOLBOX_MODE == "train_and_test":
         # train_loader
-        if config.MODEL.NAME == "STVEN":
-             train_loader = data_loader.STVENLoader.STVENLoader
+        if config.MODEL.NAME == "STVEN" or config.MODEL.NAME == "JointSTPhys":
+             train_loader = data_loader.STVENLoader.STVENLoader 
         elif config.TRAIN.DATA.DATASET == "UBFC-rPPG":
             train_loader = data_loader.UBFCrPPGLoader.UBFCrPPGLoader
         elif config.TRAIN.DATA.DATASET == "PURE":
@@ -207,7 +209,7 @@ if __name__ == "__main__":
             data_loader_dict['train'] = None
 
         # valid_loader
-        if config.MODEL.NAME == "STVEN":
+        if config.MODEL.NAME == "STVEN" or config.MODEL.NAME == "JointSTPhys":
              valid_loader = data_loader.STVENLoader.STVENLoader
         elif config.VALID.DATA.DATASET == "UBFC-rPPG":
             valid_loader = data_loader.UBFCrPPGLoader.UBFCrPPGLoader
@@ -260,7 +262,7 @@ if __name__ == "__main__":
 
     if config.TOOLBOX_MODE == "train_and_test" or config.TOOLBOX_MODE == "only_test":
         # test_loader
-        if config.MODEL.NAME == "STVEN":
+        if config.MODEL.NAME == "STVEN" or config.MODEL.NAME == "JointSTPhys":
              test_loader = data_loader.STVENLoader.STVENLoader
         elif config.TEST.DATA.DATASET == "UBFC-rPPG":
             test_loader = data_loader.UBFCrPPGLoader.UBFCrPPGLoader

@@ -370,14 +370,14 @@ class PhysFormerWithSTVEN(nn.Module):
 
         # PhysFormer for rPPG prediction
         self.physformer = ViT_ST_ST_Compact3_TDC_gra_sharp(
-            image_size=physformer_config['image_size'],
-            patches=physformer_config['patches'],
-            dim=physformer_config['dim'],
-            ff_dim=physformer_config['ff_dim'],
-            num_heads=physformer_config['num_heads'],
-            num_layers=physformer_config['num_layers'],
-            dropout_rate=physformer_config['dropout_rate'],
-            theta=physformer_config['theta']
+            image_size=tuple(physformer_config['IMAGE_SIZE']),
+            patches=tuple(physformer_config['PATCHES']),
+            dim=physformer_config['DIM'],
+            ff_dim=physformer_config['FF_DIM'],
+            num_heads=physformer_config['NUM_HEADS'],
+            num_layers=physformer_config['NUM_LAYERS'],
+            dropout_rate=physformer_config['DROPOUT_RATE'],
+            theta=physformer_config['THETA']
         )
 
     def forward(self, x: torch.Tensor, bitrate_label: torch.Tensor = None, gra_sharp: float = 2.0):
