@@ -132,7 +132,8 @@ class DeconvBlock(nn.Module):
         kernel_size: tuple = (3, 3, 3),
         stride: tuple = (1, 1, 1),
         padding: tuple | str = (1, 1, 1),
-        output_padding: tuple = (0, 0, 0)
+        output_padding: tuple = (0, 0, 0),
+        with_act: bool = True
     ):
         """
         Args:
@@ -142,15 +143,19 @@ class DeconvBlock(nn.Module):
             stride: 3D transposed convolution stride
             padding: 3D transposed convolution padding
             output_padding: 3D transposed convolution output padding
+            with_act: Whether to use activation and normalization (default: True)
         """
         super(DeconvBlock, self).__init__()
 
+        self.with_act = with_act
         self.deconv = nn.ConvTranspose3d(
             in_channels, out_channels,
             kernel_size, stride, padding, output_padding
         ) # in our case we don't need output padding. Very usual 2x upsample
-        self.norm = nn.InstanceNorm3d(out_channels)
-        self.relu = nn.ReLU(inplace=True)
+        
+        if self.with_act:
+            self.norm = nn.InstanceNorm3d(out_channels)
+            self.relu = nn.ReLU(inplace=True)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -161,8 +166,9 @@ class DeconvBlock(nn.Module):
             Output tensor [B, C, T, H*2, W*2] (upsampled)
         """
         x = self.deconv(x)
-        x = self.norm(x)
-        x = self.relu(x)
+        if self.with_act:
+            x = self.norm(x)
+            x = self.relu(x)
 
         return x
 
@@ -268,7 +274,8 @@ class STVEN(nn.Module):
             out_channels=3,
             kernel_size=(1, 7, 7),
             stride=(1, 1, 1),
-            padding=(0, 3, 3)
+            padding=(0, 3, 3),
+            with_act=False
         ) # Output: 3 x T x 128 x 128
 
         # Initialize weights
@@ -300,6 +307,8 @@ class STVEN(nn.Module):
         """
 
         # ============ ENCODER PATH ============
+        input_video = x  # Save input for global residual
+        
         # Label Injection
         if self.use_bitrate_labels and bitrate_label is not None:
              B, C, T, H, W = x.shape
@@ -324,6 +333,10 @@ class STVEN(nn.Module):
         x = self.dconv1(x)
         x = self.dconv2(x)
         x = self.dconv3(x)
+
+        # Global Residual Learning
+        # The network learns the residual (noise/artifacts) to add/subtract
+        x = x + input_video
 
         return x
 

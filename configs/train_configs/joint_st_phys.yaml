@@ -2,7 +2,7 @@ BASE: [""]
 TOOLBOX_MODE: "train_and_test" # "train_and_test"  or "only_test"
 TRAIN:
   BATCH_SIZE: 2
-  EPOCHS: 5
+  EPOCHS: 10
   LR: 1e-3
   MODEL_FILE_NAME: "Joint_STVEN_PhysFormer"
   DATA:
@@ -19,7 +19,7 @@ TRAIN:
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.0
-    END: 0.4
+    END: 0.3
     PREPROCESS:
       DATA_TYPE: ["Standardized"]
       DATA_AUG: ["None"]
@@ -52,7 +52,7 @@ VALID:
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.8
-    END: 0.85
+    END: 0.9
     PREPROCESS:
       DATA_TYPE: ["Standardized"]
       DATA_AUG: ["None"]
@@ -109,7 +109,7 @@ MODEL:
   NAME: JointSTPhys
   MODEL_DIR: "./models/JointSTPhys"
   STVEN:
-    PRETRAINED_PATH: "runs/exp/UBFC-rPPG_SizeW128_SizeH128_ClipLength160_DataTypeStandardized_DataAugNone_LabelTypeRaw_Crop_faceTrue_BackendY5F_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse/PreTrainedModels/STVEN_pretrain_STVEN_Epoch7.pth"
+    PRETRAINED_PATH: "runs/exp/UBFC-rPPG_SizeW128_SizeH128_ClipLength160_DataTypeStandardized_DataAugNone_LabelTypeRaw_Crop_faceTrue_BackendY5F_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse/PreTrainedModels/STVEN_pretrain_STVEN_Epoch1.pth"
     in_channels: 3
     out_channels: 3
     base_channels: 16
