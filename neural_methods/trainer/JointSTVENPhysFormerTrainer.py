@@ -1,4 +1,3 @@
-
 import os
 import torch
 import torch.optim as optim
@@ -8,6 +7,7 @@ from neural_methods.trainer.BaseTrainer import BaseTrainer
 from neural_methods.model.STVEN import PhysFormerWithSTVEN
 from neural_methods.loss.PhysNetNegPearsonLoss import Neg_Pearson
 from neural_methods.loss.PhysFormerLossComputer import TorchLossComputer
+from evaluation.metrics import calculate_metrics
 import math
 
 class JointSTVENPhysFormerTrainer(BaseTrainer):
@@ -24,6 +24,10 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
         self.batch_size = config.TRAIN.BATCH_SIZE
         self.frame_rate = config.TRAIN.DATA.FS
         self.config = config
+        
+        # Logging (initialize before _load_pretrained_weights)
+        self.min_valid_loss = None
+        self.best_epoch = 0
         
         # Initialize PhysFormerWithSTVEN
         self.model = PhysFormerWithSTVEN(
@@ -51,13 +55,12 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
         
         # Loss Functions (for rPPG)
         self.criterion_Pearson = Neg_Pearson()
-        
-        # Logging
-        self.min_valid_loss = None
-        self.best_epoch = 0
 
     def _load_pretrained_weights(self, config):
-        """Loads pretrained weights for STVEN and PhysFormer."""
+        """Loads pretrained weights for STVEN and PhysFormer (for training initialization)."""
+        # This is called during __init__ for training mode
+        # For testing, the joint checkpoint is loaded in test() method
+        
         # Load STVEN
         if config.MODEL.STVEN.PRETRAINED_PATH:
             print(f"Loading STVEN weights from {config.MODEL.STVEN.PRETRAINED_PATH}")
@@ -87,11 +90,15 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
         else:
             print("Warning: No pretrained path provided for PhysFormer. This is critical for backend!")
 
+
     def train(self, data_loader):
         """Training Loop"""
         if data_loader["train"] is None:
             raise ValueError("No data for train")
 
+        mean_training_losses = []
+        mean_valid_losses = []
+        
         for epoch in range(self.max_epoch_num):
             print(f"==== Joint Training Epoch: {epoch} ====")
             self.model.train() # STVEN in train mode
@@ -108,13 +115,8 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
                 # bvp_label = batch[3] # Ignored for training (using Teacher)
                 
                 # 1. Teacher Forward (Uncompressed -> PhysFormer)
-                # PhysFormer expects (video, gra_sharp). returns (rPPG, attention_scores...)
-                # We need to access physformer directly or via wrapper? 
-                # Wrapper forward() goes stven->physformer.
-                # We need just physformer.
                 with torch.no_grad():
                      teacher_rPPG, _, _, _ = self.model.physformer(uncompressed_vid, 2.0)
-                     # Normalize Teacher rPPG
                      teacher_rPPG = (teacher_rPPG - torch.mean(teacher_rPPG, axis=-1, keepdim=True)) / torch.std(teacher_rPPG, axis=-1, keepdim=True)
 
                 # 2. Student Forward (Compressed -> STVEN -> PhysFormer)
@@ -129,7 +131,7 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
                 # Normalize Student rPPG
                 student_rPPG = (student_rPPG - torch.mean(student_rPPG, axis=-1, keepdim=True)) / torch.std(student_rPPG, axis=-1, keepdim=True)
                 
-                # 3. Loss (Pearson between Student and Teacher)
+                # 3. Loss (Negative Pearson between Student and Teacher)
                 loss_pearson = self.criterion_Pearson(student_rPPG, teacher_rPPG)
                 
                 total_loss = loss_pearson
@@ -141,15 +143,32 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
                 loss_rPPG_avg.append(total_loss.item())
                 tbar.set_description(f"Loss: {total_loss.item():.4f}")
 
-            print(f"Epoch {epoch} Avg Loss: {np.mean(loss_rPPG_avg):.4f}")
+            epoch_avg_loss = np.mean(loss_rPPG_avg)
+            mean_training_losses.append(epoch_avg_loss)
+            print(f"Epoch {epoch} Avg Loss: {epoch_avg_loss:.4f}")
+            
             self.save_model(epoch)
-            self.valid(data_loader)
+            
+            # Validation
+            self.current_epoch = epoch  # For best_epoch tracking in valid()
+            valid_loss = self.valid(data_loader)
+            if valid_loss is not None:
+                mean_valid_losses.append(valid_loss)
+        
+        # Print best epoch summary
+        if not self.config.TEST.USE_LAST_EPOCH:
+            print("best trained epoch: {}, min_val_loss: {}".format(
+                self.best_epoch, self.min_valid_loss))
+        
+        # Plot and save loss history
+        if self.config.TRAIN.PLOT_LOSSES_AND_LR:
+            self.plot_losses_and_lrs(mean_training_losses, mean_valid_losses, [], self.config)
 
     def valid(self, data_loader):
         """Validation Loop"""
         if data_loader["valid"] is None:
             print("No data for valid")
-            return
+            return None
 
         print("==== Joint Validation ====")
         self.model.eval()
@@ -160,7 +179,6 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
             for idx, batch in enumerate(tbar):
                 compressed_vid = batch[0].float().to(self.device)
                 uncompressed_vid = batch[1].float().to(self.device)
-                # bvp_label = batch[3] # Ignored for validation (using Teacher)
                 
                 # Teacher
                 teacher_rPPG, _, _, _ = self.model.physformer(uncompressed_vid, 2.0)
@@ -182,10 +200,16 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
         avg_val_loss = np.mean(valid_loss)
         print(f"Validation Average Loss: {avg_val_loss:.4f}")
         
-        if self.min_valid_loss is None or avg_val_loss < self.min_valid_loss:
+        if self.min_valid_loss is None:
             self.min_valid_loss = avg_val_loss
-            self.best_epoch = -1 
-            print("New best validation loss!")
+            self.best_epoch = self.current_epoch if hasattr(self, 'current_epoch') else 0
+            print("Update best model! Best epoch: {}".format(self.best_epoch))
+        elif avg_val_loss < self.min_valid_loss:
+            self.min_valid_loss = avg_val_loss
+            self.best_epoch = self.current_epoch if hasattr(self, 'current_epoch') else 0
+            print("Update best model! Best epoch: {}".format(self.best_epoch))
+        
+        return avg_val_loss
             
     def save_model(self, index):
         if not os.path.exists(self.model_dir):
@@ -198,86 +222,83 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
         print(f"Saved Joint Model: {model_path}")
 
     def test(self, data_loader):
-        """test"""
+        """ Runs the model on test sets."""
         if data_loader["test"] is None:
             raise ValueError("No data for test")
         
-        print("==== Joint Testing ====")
-        self.model.eval()
+        print('')
+        print("===Testing===")
+
         predictions = dict()
         labels = dict()
-        
-        # Metrics
-        loss_mean = 0.0
-        
-        # We use standard metrics from evaluation package or implement here?
-        # Main.py might handle it if we return results? No, main calls trainer.test()
-        # Usually BaseTrainer.test saves results.
-        
-        with torch.no_grad():
-             tbar = tqdm(data_loader["test"], ncols=80)
-             for idx, batch in enumerate(tbar):
-                 compressed_vid = batch[0].float().to(self.device)
-                 # uncompressed_vid = batch[1] # Not needed for test unless reference
-                 # bitrate_label = batch[2] 
-                 bvp_label = batch[3].float().to(self.device)
-                 
-                 # Prepare student label (High Quality)
-                 num_classes = self.model.stven.num_bitrate_levels
-                 student_label = torch.zeros(compressed_vid.shape[0], num_classes).to(self.device)
-                 student_label[:, 0] = 1.0
-                 
-                 # Inference
-                 # student_rPPG, score1, score2, score3 = self.model(compressed_vid, student_label, 2.0)
-                 # Wait, forward returns (rPPG, ...)
-                 student_rPPG, _, _, _ = self.model(compressed_vid, student_label, 2.0)
-                 
-                 # Normalize for metric calculation? 
-                 # Usually rPPG evaluation does bandpass filtering and calculating HR, 
-                 # or if calculating correlation on signal, we normalize.
-                 # Let's normalize both to 0 mean 1 std.
-                 
-                 for i in range(len(bvp_label)):
-                     pred = (student_rPPG[i] - torch.mean(student_rPPG[i])) / torch.std(student_rPPG[i])
-                     gt = (bvp_label[i] - torch.mean(bvp_label[i])) / torch.std(bvp_label[i])
-                     
-                     if idx not in predictions:
-                         predictions[idx] = []
-                         labels[idx] = []
-                     predictions[idx].append(pred.cpu().numpy())
-                     labels[idx].append(gt.cpu().numpy())
-                     
-        # Calculate Metrics (Pearson, MAE, RMSE) - usually done post-processing or here?
-        # For simplicity, let's print overall Pearson
-        # This part depends on how strict the user wants the "Test" output to be. 
-        # For checks, I'll save the outputs to a .npz or something for the user to analyze, 
-        # or implement basic HR estimation? 
-        # Given "Refining Joint Training", I will stick to saving predictions and printing Loss.
-        # But wait, the user wants to see "metrics". 
-        
-        # I will implement basic Pearson calculation on the fly
-        all_preds = []
-        all_labels = []
-        for i in predictions:
-            all_preds.extend(predictions[i])
-            all_labels.extend(labels[i])
-            
-        all_preds = np.array(all_preds)
-        all_labels = np.array(all_labels)
-        
-        # Pearson
-        corrs = []
-        for p, l in zip(all_preds, all_labels):
-            corr = np.corrcoef(p, l)[0, 1]
-            corrs.append(corr)
-        
-        print(f"Test Pearson Correlation: {np.mean(corrs):.4f}")
-        
-        # Save results
-        save_dir = self.config.TEST.OUTPUT_SAVE_DIR
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
-        np.save(os.path.join(save_dir, "test_predictions.npy"), all_preds)
-        np.save(os.path.join(save_dir, "test_labels.npy"), all_labels)
-        print(f"Saved test results to {save_dir}")
 
+        # Load checkpoint for testing
+        if self.config.TOOLBOX_MODE == "only_test":
+            if not os.path.exists(self.config.INFERENCE.MODEL_PATH):
+                raise ValueError("Inference model path error! Please check INFERENCE.MODEL_PATH in your yaml.")
+            self.model.load_state_dict(torch.load(self.config.INFERENCE.MODEL_PATH))
+            print("Testing uses pretrained model!")
+            print(self.config.INFERENCE.MODEL_PATH)
+        else:
+            if self.config.TEST.USE_LAST_EPOCH:
+                last_epoch_model_path = os.path.join(
+                self.model_dir, self.model_file_name + '_Epoch' + str(self.max_epoch_num - 1) + '.pth')
+                print("Testing uses last epoch as non-pretrained model!")
+                print(last_epoch_model_path)
+                self.model.load_state_dict(torch.load(last_epoch_model_path))
+            else:
+                best_model_path = os.path.join(
+                    self.model_dir, self.model_file_name + '_Epoch' + str(self.best_epoch) + '.pth')
+                print("Testing uses best epoch selected using model selection as non-pretrained model!")
+                print(best_model_path)
+                self.model.load_state_dict(torch.load(best_model_path))
+
+        self.model = self.model.to(self.config.DEVICE)
+        self.model.eval()
+
+        print("Running model evaluation on the testing dataset!")
+        with torch.no_grad():
+            for idx, batch in enumerate(tqdm(data_loader["test"], ncols=80)):
+                compressed_vid = batch[0].float().to(self.device)
+                if self.config.TEST.DATA.DATASET == 'UBFC-rPPG-h264':
+                    bvp_label = batch[1].float().to(self.device)
+                    subj_index = batch[2][0]
+                    sort_index = int(batch[3][0])
+                else:
+                    bvp_label = batch[3].float().to(self.device)
+                    # Handle indices for STVENLoader if attempting to run calculate_metrics
+                    # STVENLoader doesn't return metadata needed for detailed metrics dict keys
+                    # So we might default to simple indexing if not h264
+                    subj_index = idx 
+                    sort_index = 0
+
+                # Prepare student label (High Quality)
+                num_classes = self.model.stven.num_bitrate_levels
+                student_label = torch.zeros(compressed_vid.shape[0], num_classes).to(self.device)
+                student_label[:, 0] = 1.0
+                
+                # Inference
+                student_rPPG, _, _, _ = self.model(compressed_vid, student_label, 2.0)
+                
+                # Normalize for metric calculation
+                student_rPPG = (student_rPPG - torch.mean(student_rPPG, axis=-1, keepdim=True)) / torch.std(student_rPPG, axis=-1, keepdim=True)
+                # Note: bvp_label used in calculate_metrics assumes it's just raw values to be passed
+
+                batch_size = compressed_vid.shape[0]
+                for i in range(batch_size):
+                    # For UBFC-rPPG-h264 with batch size 4 (default), metadata is usually tuple/list
+                    if self.config.TEST.DATA.DATASET == 'UBFC-rPPG-h264':
+                         subj_index = batch[2][i]
+                         sort_index = int(batch[3][i])
+
+                    if subj_index not in predictions.keys():
+                        predictions[subj_index] = dict()
+                        labels[subj_index] = dict()
+                    
+                    predictions[subj_index][sort_index] = student_rPPG[i]
+                    labels[subj_index][sort_index] = bvp_label[i]
+
+        print('')
+        calculate_metrics(predictions, labels, self.config)
+        if self.config.TEST.OUTPUT_SAVE_DIR: # saving test outputs
+            self.save_test_outputs(predictions, labels, self.config)

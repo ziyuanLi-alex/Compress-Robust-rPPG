@@ -292,6 +292,8 @@ _C.UNSUPERVISED.DATA.PREPROCESS.IBVP.DATA_MODE = 'RGB'
 _C.MODEL = CN()
 # Model name
 _C.MODEL.NAME = ''
+# Message for model description
+_C.MODEL.MESSAGE = ''
 # Checkpoint to resume, could be overwritten by command line argument
 _C.MODEL.RESUME = ''
 # Dropout rate

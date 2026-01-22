@@ -1,8 +1,8 @@
-BASE: ['']
+BASE: [""]
 TOOLBOX_MODE: "train_and_test"
 TRAIN:
-  BATCH_SIZE: 4
-  EPOCHS: 30
+  BATCH_SIZE: 2
+  EPOCHS: 8
   LR: 1e-3
   MODEL_FILE_NAME: "STVEN_pretrain"
   PLOT_LOSSES_AND_LR: True
@@ -14,10 +14,10 @@ TRAIN:
     DATA_PATH: "/home/zyuanli/dev/lib/data"
     CRF_DATASETS:
       "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
-      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5" 
-      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10" 
-      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15" 
-      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20" 
+      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5"
+      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
+      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15"
+      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
     # CRF_LEVELS: [0, 5, 10, 15, 20]
     CRF_LEVELS: [0, 5, 10]
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
@@ -25,19 +25,19 @@ TRAIN:
     BEGIN: 0.0
     END: 0.3
     PREPROCESS:
-      DATA_TYPE: ['Standardized']
-      DATA_AUG: ['None']
+      DATA_TYPE: ["Standardized"]
+      DATA_AUG: ["None"]
       LABEL_TYPE: Raw
       DO_CHUNK: True
-      CHUNK_LENGTH: 80
+      CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
-        BACKEND: 'Y5F'
+        BACKEND: "Y5F"
         USE_LARGE_FACE_BOX: True
         LARGE_BOX_COEF: 1.5
         DETECTION:
           DO_DYNAMIC_DETECTION: False
-          DYNAMIC_DETECTION_FREQUENCY : 30
+          DYNAMIC_DETECTION_FREQUENCY: 30
           USE_MEDIAN_FACE_BOX: False
       RESIZE:
         H: 128
@@ -51,10 +51,10 @@ VALID:
     DATA_PATH: "/home/zyuanli/dev/lib/data"
     CRF_DATASETS:
       "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
-      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5" 
-      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10" 
-      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15" 
-      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20" 
+      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5"
+      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
+      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15"
+      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
     # CRF_LEVELS: [0, 5, 10, 15, 20]
     CRF_LEVELS: [0, 5, 10]
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
@@ -62,25 +62,25 @@ VALID:
     BEGIN: 0.85
     END: 0.9
     PREPROCESS:
-      DATA_TYPE: ['Standardized']
-      DATA_AUG: ['None']
+      DATA_TYPE: ["Standardized"]
+      DATA_AUG: ["None"]
       LABEL_TYPE: Raw
       DO_CHUNK: True
-      CHUNK_LENGTH: 80
+      CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
-        BACKEND: 'Y5F'
+        BACKEND: "Y5F"
         USE_LARGE_FACE_BOX: True
         LARGE_BOX_COEF: 1.5
         DETECTION:
           DO_DYNAMIC_DETECTION: False
-          DYNAMIC_DETECTION_FREQUENCY : 30
+          DYNAMIC_DETECTION_FREQUENCY: 30
           USE_MEDIAN_FACE_BOX: False
       RESIZE:
         H: 128
         W: 128
 TEST:
-  METRICS: ['MAE', 'RMSE', 'MAPE', 'Pearson', 'SNR', 'BA']
+  METRICS: ["MAE", "RMSE", "MAPE", "Pearson", "SNR", "BA"]
   USE_LAST_EPOCH: False
   DATA:
     FS: 30
@@ -90,10 +90,10 @@ TEST:
     DATA_PATH: "/home/zyuanli/dev/lib/data"
     CRF_DATASETS:
       "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
-      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5" 
-      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10" 
-      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15" 
-      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20" 
+      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5"
+      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
+      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15"
+      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
     # CRF_LEVELS: [0, 5, 10, 15, 20]
     CRF_LEVELS: [0, 5, 10]
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
@@ -101,18 +101,18 @@ TEST:
     BEGIN: 0.95
     END: 1.0
     PREPROCESS:
-      DATA_TYPE: ['Standardized']
+      DATA_TYPE: ["Standardized"]
       LABEL_TYPE: Raw
       DO_CHUNK: True
-      CHUNK_LENGTH: 80
+      CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
-        BACKEND: 'Y5F'
+        BACKEND: "Y5F"
         USE_LARGE_FACE_BOX: True
         LARGE_BOX_COEF: 1.5
         DETECTION:
           DO_DYNAMIC_DETECTION: False
-          DYNAMIC_DETECTION_FREQUENCY : 30
+          DYNAMIC_DETECTION_FREQUENCY: 30
           USE_MEDIAN_FACE_BOX: False
       RESIZE:
         H: 128
@@ -128,6 +128,6 @@ MODEL:
     out_channels: 3
     base_channels: 16
     num_st_blocks: 6
-    frame_length: 80
+    frame_length: 160
     use_bitrate_labels: True
     num_bitrate_levels: 3
