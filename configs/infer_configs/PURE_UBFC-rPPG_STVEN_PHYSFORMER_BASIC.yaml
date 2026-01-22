@@ -8,7 +8,7 @@ TEST:
     DATASET: UBFC-rPPG-h264
     DO_PREPROCESS: False
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
+    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5"
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.0
@@ -64,4 +64,4 @@ INFERENCE:
   EVALUATION_WINDOW:
     USE_SMALLER_WINDOW: False
     WINDOW_SIZE: 10
-  MODEL_PATH: "/home/zyuanli/dev/projects/Compress-Robust-rPPG/runs/exp/UBFC-rPPG_SizeW128_SizeH128_ClipLength160_DataTypeStandardized_DataAugNone_LabelTypeRaw_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse/models/JointSTPhys/Joint_STVEN_PhysFormer_Joint_Epoch4.pth"
+  MODEL_PATH: "runs/exp/UBFC-rPPG_SizeW128_SizeH128_ClipLength160_DataTypeStandardized_DataAugNone_LabelTypeRaw_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse/./models/JointSTPhys/Joint_STVEN_PhysFormer_Joint_Epoch0.pth"
