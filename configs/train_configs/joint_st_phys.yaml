@@ -1,28 +1,28 @@
-BASE: ['']
-TOOLBOX_MODE: "train_and_test"      # "train_and_test"  or "only_test"
+BASE: [""]
+TOOLBOX_MODE: "train_and_test" # "train_and_test"  or "only_test"
 TRAIN:
-  BATCH_SIZE: 4
-  EPOCHS: 30
-  LR: 1e-4
+  BATCH_SIZE: 2
+  EPOCHS: 5
+  LR: 1e-3
   MODEL_FILE_NAME: "Joint_STVEN_PhysFormer"
   DATA:
     FS: 30
     DATASET: UBFC-rPPG
-    DO_PREPROCESS: False            # If first time, set to True
+    DO_PREPROCESS: False # If first time, set to True
     DATA_FORMAT: NCDHW
     DATA_PATH: "/home/zyuanli/dev/lib/data"
     CRF_DATASETS:
       "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
-      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5" 
+      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5"
       "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
     CRF_LEVELS: [0, 5, 10]
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.0
-    END: 0.3
+    END: 0.4
     PREPROCESS:
-      DATA_TYPE: ['Standardized']
-      DATA_AUG: ['None']
+      DATA_TYPE: ["Standardized"]
+      DATA_AUG: ["None"]
       LABEL_TYPE: Raw
       DO_CHUNK: True
       CHUNK_LENGTH: 160
@@ -46,7 +46,7 @@ VALID:
     DATA_PATH: "/home/zyuanli/dev/lib/data"
     CRF_DATASETS:
       "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
-      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5" 
+      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5"
       "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
     CRF_LEVELS: [0, 5, 10]
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
@@ -54,8 +54,8 @@ VALID:
     BEGIN: 0.8
     END: 0.85
     PREPROCESS:
-      DATA_TYPE: ['Standardized']
-      DATA_AUG: ['None']
+      DATA_TYPE: ["Standardized"]
+      DATA_AUG: ["None"]
       LABEL_TYPE: Raw
       DO_CHUNK: True
       CHUNK_LENGTH: 160
@@ -71,7 +71,7 @@ VALID:
         H: 128
         W: 128
 TEST:
-  METRICS: ['MAE', 'RMSE', 'MAPE', 'Pearson']
+  METRICS: ["MAE", "RMSE", "MAPE", "Pearson"]
   USE_LAST_EPOCH: False
   DATA:
     FS: 30
@@ -88,8 +88,8 @@ TEST:
     BEGIN: 0.9
     END: 1.0
     PREPROCESS:
-      DATA_TYPE: ['Standardized'] # Match Train
-      DATA_AUG: ['None']
+      DATA_TYPE: ["Standardized"] # Match Train
+      DATA_AUG: ["None"]
       LABEL_TYPE: Raw
       DO_CHUNK: True
       CHUNK_LENGTH: 160
@@ -109,7 +109,7 @@ MODEL:
   NAME: JointSTPhys
   MODEL_DIR: "./models/JointSTPhys"
   STVEN:
-    PRETRAINED_PATH: "/home/zyuanli/dev/projects/Compress-Robust-rPPG/results/checkpoints/STVEN_pretrain.pth"
+    PRETRAINED_PATH: "runs/exp/UBFC-rPPG_SizeW128_SizeH128_ClipLength160_DataTypeStandardized_DataAugNone_LabelTypeRaw_Crop_faceTrue_BackendY5F_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse/PreTrainedModels/STVEN_pretrain_STVEN_Epoch7.pth"
     in_channels: 3
     out_channels: 3
     base_channels: 16
@@ -117,7 +117,7 @@ MODEL:
     frame_length: 160
     use_bitrate_labels: True
     num_bitrate_levels: 3
-    
+
   PHYSFORMER:
     PRETRAINED_PATH: "/home/zyuanli/dev/projects/Compress-Robust-rPPG/final_model_release/UBFC-rPPG_PhysFormer_DiffNormalized.pth"
     PATCH_SIZE: 4
