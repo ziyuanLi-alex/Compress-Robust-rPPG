@@ -8,8 +8,8 @@ TEST:
     DATASET: UBFC-rPPG-h264
     DO_PREPROCESS: True
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF22"
-    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF22-cache"
+    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
+    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.9
     END: 1.0

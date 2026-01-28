@@ -112,13 +112,12 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
                 compressed_vid = batch[0].float().to(self.device)
                 uncompressed_vid = batch[1].float().to(self.device)
                 # bitrate_label = batch[2] # Ignored
-                # bvp_label = batch[3] # Ignored for training (using Teacher)
-                
-                # 1. Teacher Forward (Uncompressed -> PhysFormer)
-                with torch.no_grad():
-                     teacher_rPPG, _, _, _ = self.model.physformer(uncompressed_vid, 2.0)
-                     teacher_rPPG = (teacher_rPPG - torch.mean(teacher_rPPG, axis=-1, keepdim=True)) / torch.std(teacher_rPPG, axis=-1, keepdim=True)
+                bvp_label = batch[3].float().to(self.device) # Ground Truth PPG
 
+                # 1. Prepare Target (Ground Truth PPG)
+                # Standardize Label: (L - mean) / std
+                teacher_rPPG = (bvp_label - torch.mean(bvp_label, axis=-1, keepdim=True)) / torch.std(bvp_label, axis=-1, keepdim=True)
+                
                 # 2. Student Forward (Compressed -> STVEN -> PhysFormer)
                 # Hardcode label 0 (High Quality) for global blind enhancement
                 num_classes = self.model.stven.num_bitrate_levels
@@ -131,7 +130,7 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
                 # Normalize Student rPPG
                 student_rPPG = (student_rPPG - torch.mean(student_rPPG, axis=-1, keepdim=True)) / torch.std(student_rPPG, axis=-1, keepdim=True)
                 
-                # 3. Loss (Negative Pearson between Student and Teacher)
+                # 3. Loss (Negative Pearson between Student and Ground Truth)
                 loss_pearson = self.criterion_Pearson(student_rPPG, teacher_rPPG)
                 
                 total_loss = loss_pearson
@@ -179,10 +178,10 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
             for idx, batch in enumerate(tbar):
                 compressed_vid = batch[0].float().to(self.device)
                 uncompressed_vid = batch[1].float().to(self.device)
+                bvp_label = batch[3].float().to(self.device) # Ground Truth PPG
                 
-                # Teacher
-                teacher_rPPG, _, _, _ = self.model.physformer(uncompressed_vid, 2.0)
-                teacher_rPPG = (teacher_rPPG - torch.mean(teacher_rPPG, axis=-1, keepdim=True)) / torch.std(teacher_rPPG, axis=-1, keepdim=True)
+                # Teacher (Ground Truth)
+                teacher_rPPG = (bvp_label - torch.mean(bvp_label, axis=-1, keepdim=True)) / torch.std(bvp_label, axis=-1, keepdim=True)
 
                 # Student
                 num_classes = self.model.stven.num_bitrate_levels
