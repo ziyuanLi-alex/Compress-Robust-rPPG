@@ -9,7 +9,7 @@ TRAIN:
   DATA:
     FS: 30
     DATASET: UBFC-rPPG
-    DO_PREPROCESS: False
+    DO_PREPROCESS: True
     DATA_FORMAT: NCDHW
     DATA_PATH: "/home/zyuanli/dev/lib/data"
     CRF_DATASETS:
@@ -25,9 +25,9 @@ TRAIN:
     BEGIN: 0.0
     END: 0.3
     PREPROCESS:
-      DATA_TYPE: ["Standardized"]
+      DATA_TYPE: ["DiffNormalized"]
       DATA_AUG: ["None"]
-      LABEL_TYPE: Raw
+      LABEL_TYPE: DiffNormalized
       DO_CHUNK: True
       CHUNK_LENGTH: 160
       CROP_FACE:
@@ -46,7 +46,7 @@ VALID:
   DATA:
     FS: 30
     DATASET: UBFC-rPPG
-    DO_PREPROCESS: False
+    DO_PREPROCESS: True
     DATA_FORMAT: NCDHW
     DATA_PATH: "/home/zyuanli/dev/lib/data"
     CRF_DATASETS:
@@ -59,12 +59,12 @@ VALID:
     CRF_LEVELS: [0, 5, 10]
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
-    BEGIN: 0.85
+    BEGIN: 0.8
     END: 0.9
     PREPROCESS:
-      DATA_TYPE: ["Standardized"]
+      DATA_TYPE: ["DiffNormalized"]
       DATA_AUG: ["None"]
-      LABEL_TYPE: Raw
+      LABEL_TYPE: DiffNormalized
       DO_CHUNK: True
       CHUNK_LENGTH: 160
       CROP_FACE:
@@ -81,11 +81,11 @@ VALID:
         W: 128
 TEST:
   METRICS: ["MAE", "RMSE", "MAPE", "Pearson", "SNR", "BA"]
-  USE_LAST_EPOCH: False
+  USE_LAST_EPOCH: True
   DATA:
     FS: 30
     DATASET: UBFC-rPPG
-    DO_PREPROCESS: False
+    DO_PREPROCESS: True
     DATA_FORMAT: NCDHW
     DATA_PATH: "/home/zyuanli/dev/lib/data"
     CRF_DATASETS:
@@ -98,11 +98,11 @@ TEST:
     CRF_LEVELS: [0, 5, 10]
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
-    BEGIN: 0.95
+    BEGIN: 0.9
     END: 1.0
     PREPROCESS:
-      DATA_TYPE: ["Standardized"]
-      LABEL_TYPE: Raw
+      DATA_TYPE: ["DiffNormalized"]
+      LABEL_TYPE: DiffNormalized
       DO_CHUNK: True
       CHUNK_LENGTH: 160
       CROP_FACE:

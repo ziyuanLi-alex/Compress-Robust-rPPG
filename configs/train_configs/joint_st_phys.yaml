@@ -2,7 +2,7 @@ BASE: [""]
 TOOLBOX_MODE: "train_and_test" # "train_and_test"  or "only_test"
 TRAIN:
   BATCH_SIZE: 2
-  EPOCHS: 10
+  EPOCHS: 8
   LR: 1e-3
   MODEL_FILE_NAME: "Joint_STVEN_PhysFormer"
   DATA:
@@ -10,7 +10,7 @@ TRAIN:
     DATASET: UBFC-rPPG
     DO_PREPROCESS: False # If first time, set to True
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/home/zyuanli/dev/lib/data"
+    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG"
     CRF_DATASETS:
       "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
       "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5"
@@ -19,11 +19,11 @@ TRAIN:
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.0
-    END: 0.3
+    END: 0.8
     PREPROCESS:
-      DATA_TYPE: ["Standardized"]
+      DATA_TYPE: ["DiffNormalized"]
       DATA_AUG: ["None"]
-      LABEL_TYPE: Raw
+      LABEL_TYPE: DiffNormalized
       DO_CHUNK: True
       CHUNK_LENGTH: 160
       CROP_FACE:
@@ -43,7 +43,7 @@ VALID:
     DATASET: UBFC-rPPG
     DO_PREPROCESS: False
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/home/zyuanli/dev/lib/data"
+    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG"
     CRF_DATASETS:
       "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
       "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5"
@@ -54,9 +54,9 @@ VALID:
     BEGIN: 0.8
     END: 0.9
     PREPROCESS:
-      DATA_TYPE: ["Standardized"]
+      DATA_TYPE: ["DiffNormalized"]
       DATA_AUG: ["None"]
-      LABEL_TYPE: Raw
+      LABEL_TYPE: DiffNormalized
       DO_CHUNK: True
       CHUNK_LENGTH: 160
       CROP_FACE:
@@ -76,10 +76,11 @@ TEST:
   DATA:
     FS: 30
     DATASET: UBFC-rPPG
-    DO_PREPROCESS: False # Need to preprocess to generate label files with real BVP
+    DO_PREPROCESS: True # Need to preprocess to generate label files with real BVP
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/home/zyuanli/dev/lib/data"
+    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG"
     CRF_DATASETS:
+      "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
       "22": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF22"
       "24": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF24"
     CRF_LEVELS: [22, 24]
@@ -88,9 +89,9 @@ TEST:
     BEGIN: 0.9
     END: 1.0
     PREPROCESS:
-      DATA_TYPE: ["Standardized"] # Match Train
+      DATA_TYPE: ["DiffNormalized"] # Match Train
       DATA_AUG: ["None"]
-      LABEL_TYPE: Raw
+      LABEL_TYPE: DiffNormalized
       DO_CHUNK: True
       CHUNK_LENGTH: 160
       CROP_FACE:
@@ -109,7 +110,7 @@ MODEL:
   NAME: JointSTPhys
   MODEL_DIR: "./models/JointSTPhys"
   STVEN:
-    PRETRAINED_PATH: "runs/exp/UBFC-rPPG_SizeW128_SizeH128_ClipLength160_DataTypeStandardized_DataAugNone_LabelTypeRaw_Crop_faceTrue_BackendY5F_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse/PreTrainedModels/STVEN_pretrain_STVEN_Epoch1.pth"
+    PRETRAINED_PATH: "runs/exp/UBFC-rPPG_SizeW128_SizeH128_ClipLength160_DataTypeDiffNormalized_DataAugNone_LabelTypeDiffNormalized_Crop_faceTrue_BackendY5F_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse/PreTrainedModels/STVEN_pretrain_STVEN_Epoch1.pth"
     in_channels: 3
     out_channels: 3
     base_channels: 16

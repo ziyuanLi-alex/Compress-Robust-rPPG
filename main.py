@@ -12,7 +12,7 @@ from neural_methods import trainer
 from unsupervised_methods.unsupervised_predictor import unsupervised_predict
 from torch.utils.data import DataLoader
 
-RANDOM_SEED = 100
+RANDOM_SEED = 42
 torch.manual_seed(RANDOM_SEED)
 torch.cuda.manual_seed(RANDOM_SEED)
 np.random.seed(RANDOM_SEED)
