@@ -292,6 +292,8 @@ _C.UNSUPERVISED.DATA.PREPROCESS.IBVP.DATA_MODE = 'RGB'
 _C.MODEL = CN()
 # Model name
 _C.MODEL.NAME = ''
+# Message for model description
+_C.MODEL.MESSAGE = ''
 # Checkpoint to resume, could be overwritten by command line argument
 _C.MODEL.RESUME = ''
 # Dropout rate
@@ -352,6 +354,10 @@ _C.MODEL.PHYSFORMER.FF_DIM = 144
 _C.MODEL.PHYSFORMER.NUM_HEADS = 4
 _C.MODEL.PHYSFORMER.NUM_LAYERS = 12
 _C.MODEL.PHYSFORMER.THETA = 0.7
+_C.MODEL.PHYSFORMER.PRETRAINED_PATH = ''
+_C.MODEL.PHYSFORMER.IMAGE_SIZE = [160, 128, 128]
+_C.MODEL.PHYSFORMER.PATCHES = [4, 4, 4]
+_C.MODEL.PHYSFORMER.DROPOUT_RATE = 0.2
 # -----------------------------------------------------------------------------
 # Model Settings for STVEN
 # -----------------------------------------------------------------------------
@@ -363,6 +369,7 @@ _C.MODEL.STVEN.num_st_blocks = 6
 _C.MODEL.STVEN.frame_length = 64
 _C.MODEL.STVEN.use_bitrate_labels = False
 _C.MODEL.STVEN.num_bitrate_levels = 5
+_C.MODEL.STVEN.PRETRAINED_PATH = ''
 
 # -----------------------------------------------------------------------------
 # Inference settings

@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "infer PURE_UBFC-rPPG_STVEN_PHYSFORMER_BASIC",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config_file",
+                "configs/infer_configs/PURE_UBFC-rPPG_STVEN_PHYSFORMER_BASIC.yaml"
+            ]
+        },
+        {
+            "name": "Python Debugger: Python File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}"
+        }
+    ]
+}

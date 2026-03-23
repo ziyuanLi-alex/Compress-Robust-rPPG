@@ -74,24 +74,11 @@ for crf in "${crf_values[@]}"; do
     
     cp "$config" "$output_config"
     
-    # Update DATASET: UBFC-rPPG -> UBFC-rPPG-h264
-    sed -i 's/DATASET: UBFC-rPPG/DATASET: UBFC-rPPG-h264/g' "$output_config"
+    # UBFC-rPPG to UBFC-rPPG-h264 w/ corresponding crfs
+    sed -i 's/DATASET: UBFC-rPPG\s*$/DATASET: UBFC-rPPG-h264/g' "$output_config"
     
-    # Update DATA_PATH: UBFC-rPPG -> UBFC-rPPG-CRF{val}
-    # Using a flexible regex to handle potential trailing partial matches if user didn't quote paths exactly as expected, 
-    # but based on the example files, direct replacement of the folder name seems safest.
-    # We replace "UBFC-rPPG" with "UBFC-rPPG-CRF$crf" ONLY in the DATA_PATH line roughly.
-    # Actually, the requirement is to update paths.
-    # Let's be specific to the lines we saw:
-    # DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG"
-    # CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
-    
-    # Note: If the input config already has -CRF config in it (e.g. copying from another CRF config), 
-    # we might need to be careful. But the task implies starting from a base config (BASIC).
-    # Assuming BASIC config has "UBFC-rPPG" and "UBFC-rPPG-cache".
-    
-    sed -i "s|/UBFC-rPPG\"|/UBFC-rPPG-CRF$crf\"|g" "$output_config"
-    sed -i "s|/UBFC-rPPG-cache\"|/UBFC-rPPG-CRF$crf-cache\"|g" "$output_config"
+    sed -i "s|/UBFC-rPPG\(-CRF[0-9]*\)\?\"|/UBFC-rPPG-CRF$crf\"|g" "$output_config"
+    sed -i "s|/UBFC-rPPG\(-CRF[0-9]*\)\?-cache\"|/UBFC-rPPG-CRF$crf-cache\"|g" "$output_config"
     
     echo "Created: $output_config"
 done

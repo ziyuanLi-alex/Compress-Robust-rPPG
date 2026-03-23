@@ -24,8 +24,11 @@ def main():
     # Data Loading
     all_data = []
     
-    # Set seaborn style
-    sns.set_theme(style="whitegrid")
+    # Set seaborn theme
+    sns.set_theme(style="whitegrid", font="Times New Roman")
+    sns.set_context("paper", font_scale=2.8)
+    # sns.color_palette("tab10") # set_theme/set_context doesn't return palette to variable usually, but user snippet had it as a standalone line which effectively sets the active palette? No, sns.color_palette just returns it. sns.set_palette sets it.
+    sns.set_palette("tab10")
 
     for file_path in args.input_csvs:
         try:
@@ -67,7 +70,7 @@ def main():
     
     # Get unique sources and assign colors
     sources = combined_df['Source'].unique()
-    palette = sns.color_palette("deep", len(sources))
+    palette = sns.color_palette("tab10", len(sources))
 
     # Determine X-axis ranges
     all_crf = combined_df['CRF'].values
@@ -125,6 +128,7 @@ def main():
     for ax_idx, ax in enumerate(axes):
         segment = segments[ax_idx]
         ax.set_xlim(segment)
+        ax.grid(True, linestyle=':', alpha=0.6)
         
         # Hide spines for broken axis look
         if len(segments) > 1:
@@ -156,16 +160,6 @@ def main():
             data_main = data[data['CRF'] != 0]
             data_crf0 = data[data['CRF'] == 0]
             
-            # Draw lines manually using plot to ensure they respect the axis limits (clip)
-            # sns.lineplot might try to auto-scale or be weird on multiple axes?
-            # Actually sns.lineplot is fine, just pass ax=ax
-            
-            # We must be careful: sns.lineplot will connect points.
-            # If a segment is [0, 2], and we have points at 0 and 16.
-            # The line 0->16 exists in data.
-            # In axis [0, 2], it will draw 0->(offscreen). Correct.
-            # In axis [14, 24], it will draw (offscreen)->16. Correct.
-            
             if not data_main.empty:
                 sns.lineplot(
                     data=data_main, 
@@ -174,8 +168,8 @@ def main():
                     label=source if ax_idx == 0 else None, # Only label once
                     color=color, 
                     marker='o',
-                    markersize=8,
-                    linewidth=2,
+                    markersize=10, # Increased from 8
+                    linewidth=3,   # Increased from 2
                     ax=ax,
                     legend=False
                 )
@@ -189,15 +183,11 @@ def main():
                     ecolor=color, 
                     capsize=5, 
                     alpha=0.6,
-                    linewidth=1.5
+                    linewidth=2 # Increased from 1.5
                 )
 
             if not data_crf0.empty:
                 # Logic for legend: only add to first subplot if available
-                # If data_main was empty, we need to label this.
-                # Simplification: Add label to plot only if it hasn't been added.
-                # But we handled label in lineplot above for ax_idx==0.
-                
                 do_label = (ax_idx == 0) and (data_main.empty)
                 
                 ax.errorbar(
@@ -208,36 +198,40 @@ def main():
                     color=color, 
                     ecolor=color, 
                     capsize=5, 
-                    markersize=8,
+                    markersize=10, # Increased from 8
                     label=source if do_label else None
                 )
 
+        # Remove automatic seaborn labels
+        ax.set_xlabel('')
+        ax.set_ylabel('')
+
     # Common labels
-    fig.text(0.5, 0.04, 'CRF Value', ha='center', fontsize=14)
+    fig.text(0.5, 0.04, 'CRF Value', ha='center', fontsize=26, fontweight='bold')
     # y-label is tricky with subplots. Put it on the first axis or figure?
-    # Figure text is easiest for centering.
-    fig.text(0.04, 0.5, 'MAE', va='center', rotation='vertical', fontsize=14)
+    fig.text(0.04, 0.5, 'MAE', va='center', rotation='vertical', fontsize=26, fontweight='bold')
     
-    # Title
-    fig.suptitle('MAE Drop vs CRF Value', fontsize=16)
+    # Title - Optional, maybe remove if not in snippet? I'll keep it but larger.
+    # fig.suptitle('MAE Drop vs CRF Value', fontsize=16) 
+    
+    # Update title handling: User snippet didn't used title, commented out. 
+    # I will comment it out too to match "shown as this section".
+    # fig.suptitle('MAE Drop vs CRF Value', fontsize=30, fontweight='bold')
 
     # Legend
-    # Since we suppressed legend in loop, we need to create a common legend.
-    # But we added labels to lines in ax[0].
-    # So we can just ask ax[0] for handles/labels.
     handles, labels = axes[0].get_legend_handles_labels()
-    # If some sources only appear in other segments (unlikely), we might miss them.
-    # Assuming all sources cover similar ranges or at least appear in first segment or are handled.
-    # Actually, if a source is ONLY in segment 2, ax[0] won't have it.
-    # Better to gather handles from all axes?
-    # Or just rely on the fact that we iterate sources in outer loop and add to ax[0] if possible.
-    # Simplest: Manually build legend from handles.
-    
-    # Deduplicate labels
     by_label = dict(zip(labels, handles))
-    fig.legend(by_label.values(), by_label.keys(), loc='center right', title='Source')
+    # Move legend to be cleaner, maybe inside if room, or outside.
+    # Snippet doesn't show legend code (except hue='Type'), but usually seaborn puts it automatically.
+    # I'll keep my manual legend but font scaled.
+    # User requested top left.
+    fig.legend(by_label.values(), by_label.keys(), loc='upper left', title='Source', fontsize=20, title_fontsize=22, bbox_to_anchor=(0.12, 0.93))
+    
     results_path = Path(args.output)
-    plt.subplots_adjust(right=0.85) # Make room for legend
+    
+    # Adjust layout
+    # plt.subplots_adjust(right=0.85) # Make room for legend if outside
+    plt.tight_layout(rect=[0.05, 0.05, 1, 1]) # Adjust for fig text
     
     # Save output
     output_path = Path(args.output)
