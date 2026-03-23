@@ -1,0 +1,67 @@
+BASE: [""]
+TOOLBOX_MODE: "only_test"
+TEST:
+  METRICS: ["MAE", "RMSE", "MAPE", "Pearson", "SNR", "BA"]
+  USE_LAST_EPOCH: False
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG-h264
+    DO_PREPROCESS: True
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
+    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.9
+    END: 1.0
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        BACKEND: "Y5F"
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 30
+          USE_MEDIAN_FACE_BOX: False
+      RESIZE:
+        H: 128
+        W: 128
+DEVICE: cuda:0
+NUM_OF_GPU_TRAIN: 1
+LOG:
+  PATH: runs/exp
+MODEL:
+  DROP_RATE: 0.2
+  NAME: JointSTPhys
+  MESSAGE: "Joint inference config using STVEN preprocessing and PhysFormer backend"
+  STVEN:
+    PRETRAINED_PATH: "/home/zyuanli/dev/projects/Compress-Robust-rPPG/results/checkpoints/STVEN_pretrain.pth"
+    out_channels: 3
+    base_channels: 16
+    num_st_blocks: 6
+    frame_length: 160
+    use_bitrate_labels: True
+    num_bitrate_levels: 3
+  PHYSFORMER:
+    PRETRAINED_PATH: "/home/zyuanli/dev/projects/Compress-Robust-rPPG/final_model_release/UBFC-rPPG_PhysFormer_DiffNormalized.pth"
+    PATCH_SIZE: 4
+    DIM: 96
+    FF_DIM: 144
+    NUM_HEADS: 4
+    NUM_LAYERS: 12
+    THETA: 0.7
+    IMAGE_SIZE: [160, 128, 128]
+    PATCHES: [4, 4, 4]
+    DROPOUT_RATE: 0.2
+INFERENCE:
+  BATCH_SIZE: 4
+  EVALUATION_METHOD: "FFT"
+  EVALUATION_WINDOW:
+    USE_SMALLER_WINDOW: True
+    WINDOW_SIZE: 20
+  MODEL_PATH: "runs/exp/UBFC-rPPG_SizeW128_SizeH128_ClipLength160_DataTypeDiffNormalized_DataAugNone_LabelTypeDiffNormalized_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse/./models/JointSTPhys/Joint_STVEN_PhysFormer_Joint_Epoch6.pth"

@@ -1,8 +1,8 @@
-BASE: ['']
+BASE: [""]
 TOOLBOX_MODE: "train_and_test"
 TRAIN:
-  BATCH_SIZE: 8
-  EPOCHS: 30
+  BATCH_SIZE: 2
+  EPOCHS: 8
   LR: 1e-3
   MODEL_FILE_NAME: "STVEN_pretrain"
   PLOT_LOSSES_AND_LR: True
@@ -14,34 +14,34 @@ TRAIN:
     DATA_PATH: "/home/zyuanli/dev/lib/data"
     CRF_DATASETS:
       "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
-      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5" 
-      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10" 
-      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15" 
-      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20" 
+      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5"
+      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
+      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15"
+      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
     # CRF_LEVELS: [0, 5, 10, 15, 20]
     CRF_LEVELS: [0, 5, 10]
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.0
-    END: 0.2
+    END: 0.3
     PREPROCESS:
-      DATA_TYPE: ['Standardized']
-      DATA_AUG: ['None']
-      LABEL_TYPE: Raw
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
       DO_CHUNK: True
       CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
-        BACKEND: 'Y5F'
+        BACKEND: "Y5F"
         USE_LARGE_FACE_BOX: True
         LARGE_BOX_COEF: 1.5
         DETECTION:
           DO_DYNAMIC_DETECTION: False
-          DYNAMIC_DETECTION_FREQUENCY : 30
+          DYNAMIC_DETECTION_FREQUENCY: 30
           USE_MEDIAN_FACE_BOX: False
       RESIZE:
-        H: 64
-        W: 64
+        H: 128
+        W: 128
 VALID:
   DATA:
     FS: 30
@@ -51,37 +51,37 @@ VALID:
     DATA_PATH: "/home/zyuanli/dev/lib/data"
     CRF_DATASETS:
       "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
-      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5" 
-      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10" 
-      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15" 
-      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20" 
+      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5"
+      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
+      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15"
+      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
     # CRF_LEVELS: [0, 5, 10, 15, 20]
     CRF_LEVELS: [0, 5, 10]
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
-    BEGIN: 0.9
-    END: 0.95
+    BEGIN: 0.8
+    END: 0.9
     PREPROCESS:
-      DATA_TYPE: ['Standardized']
-      DATA_AUG: ['None']
-      LABEL_TYPE: Raw
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
       DO_CHUNK: True
       CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
-        BACKEND: 'Y5F'
+        BACKEND: "Y5F"
         USE_LARGE_FACE_BOX: True
         LARGE_BOX_COEF: 1.5
         DETECTION:
           DO_DYNAMIC_DETECTION: False
-          DYNAMIC_DETECTION_FREQUENCY : 30
+          DYNAMIC_DETECTION_FREQUENCY: 30
           USE_MEDIAN_FACE_BOX: False
       RESIZE:
-        H: 64
-        W: 64
+        H: 128
+        W: 128
 TEST:
-  METRICS: ['MAE', 'RMSE', 'MAPE', 'Pearson', 'SNR', 'BA']
-  USE_LAST_EPOCH: False
+  METRICS: ["MAE", "RMSE", "MAPE", "Pearson", "SNR", "BA"]
+  USE_LAST_EPOCH: True
   DATA:
     FS: 30
     DATASET: UBFC-rPPG
@@ -90,33 +90,33 @@ TEST:
     DATA_PATH: "/home/zyuanli/dev/lib/data"
     CRF_DATASETS:
       "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
-      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5" 
-      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10" 
-      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15" 
-      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20" 
+      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5"
+      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
+      # "15": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF15"
+      # "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
     # CRF_LEVELS: [0, 5, 10, 15, 20]
     CRF_LEVELS: [0, 5, 10]
     CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
-    BEGIN: 0.95
+    BEGIN: 0.9
     END: 1.0
     PREPROCESS:
-      DATA_TYPE: ['Standardized']
-      LABEL_TYPE: Raw
+      DATA_TYPE: ["DiffNormalized"]
+      LABEL_TYPE: DiffNormalized
       DO_CHUNK: True
       CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
-        BACKEND: 'Y5F'
+        BACKEND: "Y5F"
         USE_LARGE_FACE_BOX: True
         LARGE_BOX_COEF: 1.5
         DETECTION:
           DO_DYNAMIC_DETECTION: False
-          DYNAMIC_DETECTION_FREQUENCY : 30
+          DYNAMIC_DETECTION_FREQUENCY: 30
           USE_MEDIAN_FACE_BOX: False
       RESIZE:
-        H: 64
-        W: 64
+        H: 128
+        W: 128
 DEVICE: cuda:0
 NUM_OF_GPU_TRAIN: 1
 LOG:
@@ -127,7 +127,7 @@ MODEL:
     in_channels: 3
     out_channels: 3
     base_channels: 16
-    num_st_blocks: 2
+    num_st_blocks: 6
     frame_length: 160
     use_bitrate_labels: True
     num_bitrate_levels: 3

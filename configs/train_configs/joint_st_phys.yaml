@@ -1,0 +1,135 @@
+BASE: [""]
+TOOLBOX_MODE: "train_and_test" # "train_and_test"  or "only_test"
+TRAIN:
+  BATCH_SIZE: 2
+  EPOCHS: 8
+  LR: 1e-3
+  MODEL_FILE_NAME: "Joint_STVEN_PhysFormer"
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG
+    DO_PREPROCESS: False # If first time, set to True
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG"
+    CRF_DATASETS:
+      "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
+      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5"
+      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
+    CRF_LEVELS: [0, 5, 10]
+    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.0
+    END: 0.8
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 30
+          USE_MEDIAN_FACE_BOX: False
+      RESIZE:
+        H: 128
+        W: 128
+VALID:
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG
+    DO_PREPROCESS: False
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG"
+    CRF_DATASETS:
+      "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
+      "5": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF5"
+      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
+    CRF_LEVELS: [0, 5, 10]
+    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.8
+    END: 0.9
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 30
+          USE_MEDIAN_FACE_BOX: False
+      RESIZE:
+        H: 128
+        W: 128
+TEST:
+  METRICS: ["MAE", "RMSE", "MAPE", "Pearson"]
+  USE_LAST_EPOCH: False
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG
+    DO_PREPROCESS: True # Need to preprocess to generate label files with real BVP
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG"
+    CRF_DATASETS:
+      "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
+      "22": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF22"
+      "24": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF24"
+    CRF_LEVELS: [22, 24]
+    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.9
+    END: 1.0
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"] # Match Train
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 30
+          USE_MEDIAN_FACE_BOX: False
+      RESIZE:
+        H: 128
+        W: 128
+MODEL:
+  DROP_RATE: 0.2
+  NAME: JointSTPhys
+  MODEL_DIR: "./models/JointSTPhys"
+  STVEN:
+    PRETRAINED_PATH: "runs/exp/UBFC-rPPG_SizeW128_SizeH128_ClipLength160_DataTypeDiffNormalized_DataAugNone_LabelTypeDiffNormalized_Crop_faceTrue_BackendY5F_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse/PreTrainedModels/STVEN_pretrain_STVEN_Epoch1.pth"
+    in_channels: 3
+    out_channels: 3
+    base_channels: 16
+    num_st_blocks: 6
+    frame_length: 160
+    use_bitrate_labels: True
+    num_bitrate_levels: 3
+
+  PHYSFORMER:
+    PRETRAINED_PATH: "/home/zyuanli/dev/projects/Compress-Robust-rPPG/final_model_release/UBFC-rPPG_PhysFormer_DiffNormalized.pth"
+    PATCH_SIZE: 4
+    DIM: 96
+    FF_DIM: 144
+    NUM_HEADS: 4
+    NUM_LAYERS: 12
+    THETA: 0.7
+    IMAGE_SIZE: [160, 128, 128]
+    PATCHES: [4, 4, 4]
+    DROPOUT_RATE: 0.2
+INFERENCE:
+  BATCH_SIZE: 4
+  MODEL_PATH: ""
