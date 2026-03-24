@@ -1,0 +1,152 @@
+# QAFC-PhysFormer Training Configuration
+# Train on UBFC-rPPG, Validate on UBFC-rPPG, Test on PURE
+# Based on joint_st_phys.yaml and STVEN_pretrain.yaml patterns
+
+BASE: [""]
+TOOLBOX_MODE: "train_and_test"
+
+TRAIN:
+  BATCH_SIZE: 4
+  EPOCHS: 5
+  LR: 1.0e-4
+  MODEL_FILE_NAME: "QAFCPhysFormer"
+  QAFC:
+    PHASE_BOUNDARY: 70
+    RANKING_MARGIN: 0.1
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG
+    DO_PREPROCESS: True
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/home/zyuanli/dev/lib/data"
+    CRF_DATASETS:
+      "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
+      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
+      "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
+    CRF_LEVELS: [0, 10, 20]
+    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.0
+    END: 0.7
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        BACKEND: "Y5F"
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 30
+          USE_MEDIAN_FACE_BOX: False
+      RESIZE:
+        H: 128
+        W: 128
+
+VALID:
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG
+    DO_PREPROCESS: True
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/home/zyuanli/dev/lib/data"
+    CRF_DATASETS:
+      "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
+      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
+      "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
+    CRF_LEVELS: [0, 10, 20]
+    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.7
+    END: 1.0
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        BACKEND: "Y5F"
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 30
+          USE_MEDIAN_FACE_BOX: False
+      RESIZE:
+        H: 128
+        W: 128
+
+TEST:
+  METRICS: ["MAE", "RMSE", "MAPE", "Pearson", "BA"]
+  USE_LAST_EPOCH: False
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG
+    DO_PREPROCESS: True
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/home/zyuanli/dev/lib/data"
+    CRF_DATASETS:
+      "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
+      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
+      "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
+    CRF_LEVELS: [0, 10, 20]
+    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.9
+    END: 1.0
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        BACKEND: "Y5F"
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 30
+          USE_MEDIAN_FACE_BOX: False
+      RESIZE:
+        H: 128
+        W: 128
+
+DEVICE: cuda:0
+NUM_OF_GPU_TRAIN: 1
+
+MODEL:
+  DROP_RATE: 0.2
+  NAME: QAFCPhysFormer
+  MODEL_DIR: "PreTrainedModels"
+  QAFC_PHYSFORMER:
+    PRETRAINED_PATH: ""  # Path to pretrained PhysFormer weights (optional)
+    IMAGE_SIZE: [160, 128, 128]
+    PATCHES: [4, 4, 4]
+    DIM: 64
+    FF_DIM: 256
+    NUM_HEADS: 4
+    NUM_LAYERS: 12
+    DROPOUT_RATE: 0.2
+    THETA: 0.2
+    QUALITY_CHANNELS: 64
+    HIDDEN_SIZE: 128
+    USE_BLOCK_PATTERN: True
+
+INFERENCE:
+  BATCH_SIZE: 4
+  EVALUATION_METHOD: "FFT"
+  EVALUATION_WINDOW:
+    USE_SMALLER_WINDOW: True
+    WINDOW_SIZE: 20
+  MODEL_PATH: ""
+
+LOG:
+  PATH: "runs/exp"

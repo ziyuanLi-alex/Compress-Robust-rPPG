@@ -31,6 +31,10 @@ _C.TRAIN.OPTIMIZER.BETAS = (0.9, 0.999)
 _C.TRAIN.OPTIMIZER.MOMENTUM = 0.9
 _C.TRAIN.MODEL_FILE_NAME = ''
 _C.TRAIN.PLOT_LOSSES_AND_LR = True
+# QAFC-PhysFormer training settings
+_C.TRAIN.QAFC = CN()
+_C.TRAIN.QAFC.PHASE_BOUNDARY = 70  # Epoch to switch from Phase 1 to Phase 2
+_C.TRAIN.QAFC.RANKING_MARGIN = 0.1
 # Train.Data settings
 _C.TRAIN.DATA = CN()
 _C.TRAIN.DATA.INFO = CN()
@@ -370,6 +374,27 @@ _C.MODEL.STVEN.frame_length = 64
 _C.MODEL.STVEN.use_bitrate_labels = False
 _C.MODEL.STVEN.num_bitrate_levels = 5
 _C.MODEL.STVEN.PRETRAINED_PATH = ''
+
+# -----------------------------------------------------------------------------
+# Model Settings for QAFC-PhysFormer
+# -----------------------------------------------------------------------------
+_C.MODEL.QAFC_PHYSFORMER = CN()
+_C.MODEL.QAFC_PHYSFORMER.PRETRAINED_PATH = ''
+_C.MODEL.QAFC_PHYSFORMER.IMAGE_SIZE = [160, 128, 128]  # [T, H, W]
+_C.MODEL.QAFC_PHYSFORMER.PATCHES = [4, 4, 4]
+_C.MODEL.QAFC_PHYSFORMER.DIM = 64
+_C.MODEL.QAFC_PHYSFORMER.FF_DIM = 256
+_C.MODEL.QAFC_PHYSFORMER.NUM_HEADS = 4
+_C.MODEL.QAFC_PHYSFORMER.NUM_LAYERS = 12
+_C.MODEL.QAFC_PHYSFORMER.DROPOUT_RATE = 0.2
+_C.MODEL.QAFC_PHYSFORMER.THETA = 0.2
+_C.MODEL.QAFC_PHYSFORMER.QUALITY_CHANNELS = 64
+_C.MODEL.QAFC_PHYSFORMER.HIDDEN_SIZE = 128
+_C.MODEL.QAFC_PHYSFORMER.USE_BLOCK_PATTERN = True
+
+# CRF datasets for compression-aware training
+_C.CRF_DATASETS = []  # Placeholder - actual dict loaded from YAML
+_C.CRF_LEVELS = [0, 5, 10, 15, 20]
 
 # -----------------------------------------------------------------------------
 # Inference settings

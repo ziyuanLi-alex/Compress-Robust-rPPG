@@ -11,3 +11,4 @@ import neural_methods.trainer.RhythmFormerTrainer
 import neural_methods.trainer.FactorizePhysTrainer
 import neural_methods.trainer.STVENTrainer
 import neural_methods.trainer.JointSTVENPhysFormerTrainer
+import neural_methods.trainer.QAFCPhysFormerTrainer
