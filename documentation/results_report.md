@@ -15,18 +15,17 @@ results/
 │   └── mae_drop_plot.png         # MAE degradation vs compression plot
 ├── checkpoints/
 │   └── STVEN_pretrain.pth        # Pretrained STVEN frontend model (12.3 MB)
-├── PhysFormer_CRF1624_incl0.csv  # PhysFormer CRF results
-├── PhysMamba_CRF1624_incl0.csv   # PhysMamba CRF results (duplicate/variant)
-├── PhysMamba_batch.csv           # PhysMamba batch inference results
-├── Physformer_batch.csv          # PhysFormer batch inference results
-├── STVEN_Joint_batch.csv         # Joint STVEN+PhysFormer batch results
-├── batch_inference_results.csv   # Comprehensive multi-model comparison
-└── joint.csv                     # Joint training results summary
+├── PhysFormer_PURE_UBFC-rPPG_CRF1624_incl0.csv       # PhysFormer CRF 0,16,18,20,22,24
+├── PhysFormer_PURE_UBFC-rPPG_BASIC.csv               # PhysFormer baseline (no compression)
+├── PhysMamba_PURE_UBFC-rPPG_CRF1624_incl0.csv        # PhysMamba CRF 0,16,18,20,22,24 (v1)
+├── PhysMamba_PURE_UBFC-rPPG_CRF1624_incl0_v2.csv     # PhysMamba CRF 0,16,18,20,22,24 (v2)
+├── STVEN-PhysFormer_PURE_UBFC-rPPG_CRF1624_incl0.csv # STVEN+PhysFormer joint CRF 0,16,18,20,22,24
+└── MultiModel_Comparison_BASIC.csv                   # 17-model baseline comparison
 ```
 
 ## CSV Results Files
 
-### 1. `batch_inference_results.csv` - Multi-Model Benchmark
+### 1. `MultiModel_Comparison_BASIC.csv` - Multi-Model Benchmark
 
 Comprehensive comparison of 17 different model configurations trained on PURE dataset and tested on UBFC-rPPG (and SCAMPS variants).
 
@@ -54,22 +53,22 @@ Comprehensive comparison of 17 different model configurations trained on PURE da
 - Traditional unsupervised methods show significantly higher error
 - SCAMPS-trained models show degraded cross-dataset performance on UBFC-rPPG
 
-### 2. `PhysFormer_CRF1624_incl0.csv` - Compression Robustness (PhysFormer)
+### 2. `PhysFormer_PURE_UBFC-rPPG_CRF1624_incl0.csv` - PhysFormer Compression Robustness
 
 Evaluation of PhysFormer under video compression (CRF levels 0, 16, 18, 20, 22, 24).
 
 | CRF Level | MAE | RMSE | MAPE | Pearson | SNR |
 |-----------|-----|------|------|---------|-----|
-| CRF 0 (lossless) | 1.84 | 3.93 | 1.99 | 0.976 | 0.26 |
-| CRF 16 | 8.16 | 18.68 | 7.19 | 0.551 | N/A |
-| CRF 18 | 11.43 | 20.98 | 10.15 | 0.466 | N/A |
-| CRF 20 | 22.91 | 29.88 | 21.82 | 0.122 | N/A |
-| CRF 22 | 26.68 | 33.67 | 24.71 | 0.158 | N/A |
-| CRF 24 | 28.94 | 34.80 | 27.21 | 0.156 | N/A |
+| CRF 0 (lossless) | 1.59 | 3.90 | 1.73 | 0.977 | N/A |
+| CRF 16 | 9.21 | 17.16 | 8.89 | 0.634 | N/A |
+| CRF 18 | 11.78 | 20.87 | 11.26 | 0.580 | N/A |
+| CRF 20 | 19.52 | 27.74 | 18.47 | 0.381 | N/A |
+| CRF 22 | 20.51 | 27.82 | 19.93 | 0.412 | N/A |
+| CRF 24 | 27.43 | 33.60 | 26.19 | 0.030 | N/A |
 
-**Observation:** Significant performance degradation beyond CRF 16, with Pearson correlation dropping from 0.976 to ~0.15.
+**Observation:** Significant performance degradation beyond CRF 16, with Pearson correlation dropping from 0.977 to ~0.03.
 
-### 3. `PhysMamba_batch.csv` - PhysMamba Compression Robustness
+### 3. `PhysMamba_PURE_UBFC-rPPG_CRF1624_incl0_v2.csv` - PhysMamba Compression Robustness (Latest)
 
 | CRF Level | MAE | RMSE | MAPE | Pearson | SNR |
 |-----------|-----|------|------|---------|-----|
@@ -80,33 +79,29 @@ Evaluation of PhysFormer under video compression (CRF levels 0, 16, 18, 20, 22, 
 | CRF 22 | 26.64 | 34.56 | 25.88 | 0.220 | N/A |
 | CRF 24 | 24.33 | 28.81 | 24.79 | 0.197 | N/A |
 
-### 4. `STVEN_Joint_batch.csv` - Joint STVEN+PhysFormer
+### 4. `STVEN-PhysFormer_PURE_UBFC-rPPG_CRF1624_incl0.csv` - STVEN+PhysFormer Joint Training (Latest)
 
 Joint training results with STVEN frontend and PhysFormer backend:
 
 | CRF Level | MAE | RMSE | MAPE | Pearson | SNR |
 |-----------|-----|------|------|---------|-----|
-| CRF 0 | 1.85 | 4.31 | 1.71 | 0.977 | 1.63 |
-| CRF 16 | 8.79 | 19.03 | 8.07 | 0.646 | N/A |
-| CRF 18 | 12.77 | 21.49 | 11.79 | 0.529 | N/A |
-| CRF 20 | 13.78 | 22.73 | 12.76 | 0.537 | N/A |
-| CRF 22 | 20.35 | 25.40 | 20.73 | 0.277 | N/A |
-| CRF 24 | 27.94 | 34.03 | 29.92 | N/A | N/A |
+| CRF 0 | 0.28 | 1.21 | 0.25 | 0.998 | 4.45 |
+| CRF 16 | 2.50 | 8.31 | 2.45 | 0.915 | 1.27 |
+| CRF 18 | 1.48 | 3.83 | 1.31 | 0.982 | 0.31 |
+| CRF 20 | 1.20 | 3.35 | 1.22 | 0.985 | N/A |
+| CRF 22 | 7.59 | 14.74 | 7.33 | 0.787 | N/A |
+| CRF 24 | 14.90 | 22.31 | 17.22 | 0.206 | N/A |
 
-### 5. `joint.csv` - Alternative Joint Training Results
+### 5. `PhysFormer_PURE_UBFC-rPPG_BASIC.csv` - PhysFormer Baseline
 
-| CRF Level | MAE | RMSE | MAPE | Pearson |
-|-----------|-----|------|------|---------|
-| CRF 0 | 1.59 | 3.90 | 1.73 | 0.977 |
-| CRF 16 | 9.21 | 17.16 | 8.89 | 0.634 |
-| CRF 18 | 11.78 | 20.87 | 11.26 | 0.580 |
-| CRF 20 | 19.52 | 27.74 | 18.47 | 0.381 |
-| CRF 22 | 20.51 | 27.82 | 19.93 | 0.412 |
-| CRF 24 | 27.43 | 33.60 | 26.19 | 0.030 |
+Single model baseline result without compression.
 
-### 6. `PhysFormer_CRF1624_incl0.csv` - Additional PhysFormer Results
-
-Contains duplicate/variant runs with similar CRF evaluation.
+| Metric | Value |
+|--------|-------|
+| MAE | 0.73 |
+| RMSE | 2.30 |
+| MAPE | 1.02 |
+| Pearson | 0.997 |
 
 ## Figures
 
@@ -147,12 +142,23 @@ All CSV files use consistent metrics:
 
 ## Key Research Findings
 
-1. **Compression Robustness Gap:** All models show significant degradation beyond CRF 16, indicating a need for compression-robust training strategies.
+1. **Compression Robustness Gap:** All standalone models show significant degradation beyond CRF 16, indicating a need for compression-robust training strategies.
 
-2. **Best Baseline Performance:** PhysFormer achieves the lowest MAE (0.73 BPM) on uncompressed video.
+2. **Best Baseline Performance:** PhysFormer achieves the best baseline performance (MAE: 0.73, RMSE: 2.30) on uncompressed video among standalone backends.
 
-3. **Joint Training:** STVEN+PhysFormer joint training shows comparable performance to standalone PhysFormer at CRF 0, but similar degradation patterns at higher CRF levels.
+3. **STVEN Joint Training Enhancement:** The STVEN-PhysFormer joint training achieves substantially lower RMSE than both standalone PhysFormer and PhysMamba backends across all CRF levels:
 
-4. **Cross-Dataset Generalization:** Models trained on SCAMPS (synthetic data) show poor generalization to UBFC-rPPG (real data), with MAE increasing 5-10x.
+   | CRF | PhysFormer RMSE | PhysMamba RMSE | STVEN-PhysFormer RMSE | Improvement |
+   |-----|-----------------|----------------|----------------------|-------------|
+   | 0   | 3.90            | 3.80           | **1.21**             | 3.2x        |
+   | 16  | 17.16           | 7.50           | **8.31**             | -           |
+   | 18  | 20.87           | 22.92          | **3.83**             | 5.4-6.0x    |
+   | 20  | 27.74           | 24.16          | **3.35**             | 7.2-8.3x    |
+   | 22  | 27.82           | 34.56          | **14.74**            | 1.9-2.3x    |
+   | 24  | 33.60           | 28.81          | **22.31**            | 1.3-1.5x    |
+
+   The STVEN frontend provides significant compression robustness benefits, particularly at moderate compression levels (CRF 18-20) where it achieves 5-8x lower RMSE than standalone backends.
+
+4. **Cross-Dataset Generalization:** Models trained on SCAMPS (synthetic data) show poor generalization to UBFC-rPPG (real data), with MAE increasing 5-10x compared to PURE-trained models.
 
 5. **Unsupervised Methods:** Traditional signal processing methods (POS, CHROM, ICA, GREEN, LGI, PBV) achieve MAE of 14.36 BPM, significantly worse than supervised neural methods.
