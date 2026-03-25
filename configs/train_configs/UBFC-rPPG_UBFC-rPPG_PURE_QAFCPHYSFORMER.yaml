@@ -127,7 +127,7 @@ MODEL:
   NAME: QAFCPhysFormer
   MODEL_DIR: "PreTrainedModels"
   QAFC_PHYSFORMER:
-    PRETRAINED_PATH: ""  # Path to pretrained PhysFormer weights (optional)
+    PRETRAINED_PATH: "final_model_release/PURE_PhysFormer_DiffNormalized.pth"  # Path to pretrained PhysFormer weights (optional)
     IMAGE_SIZE: [160, 128, 128]
     PATCHES: [4, 4, 4]
     DIM: 64
