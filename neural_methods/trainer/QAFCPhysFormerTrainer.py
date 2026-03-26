@@ -1,7 +1,9 @@
 """Trainer for QAFC-PhysFormer.
 
 Follows rPPG-Toolbox BaseTrainer pattern with:
-- Two-phase training (joint 0-70 epochs, fine-tune 70-100)
+- Two-phase training support (separate configs for Phase 1 and Phase 2)
+- Phase 1: Joint training of quality branch + FiLM + backbone
+- Phase 2: Fine-tune FiLM + backbone (quality branch frozen, loads Phase 1 checkpoint)
 - Parameter groups with different learning rates
 - Quality ranking loss for self-supervised quality learning
 """
@@ -22,9 +24,10 @@ class QAFCPhysFormerTrainer(BaseTrainer):
     """
     Trainer for QAFC-PhysFormer.
 
-    Two-phase training:
-    - Phase 1 (epochs 0-70): Joint training of quality branch + FiLM + backbone
-    - Phase 2 (epochs 70-100): Fine-tune FiLM + backbone (quality branch frozen)
+    Supports two training modes via TRAIN.QAFC.TRAINING_PHASE config:
+    - Phase 1 (TRAINING_PHASE=1): Joint training of quality branch + FiLM + backbone
+    - Phase 2 (TRAINING_PHASE=2): Fine-tune FiLM + backbone (quality branch frozen)
+      Requires PHASE1_CHECKPOINT path to load Phase 1 weights
     """
 
     def __init__(self, config, data_loader):
@@ -41,6 +44,9 @@ class QAFCPhysFormerTrainer(BaseTrainer):
         self.min_valid_loss = None
         self.best_epoch = 0
 
+        # Get training phase (1 or 2)
+        self.training_phase = config.TRAIN.QAFC.TRAINING_PHASE
+
         # Initialize QAFCPhysFormer model
         self.model = QAFCPhysFormer(
             physformer_config=config.MODEL.QAFC_PHYSFORMER,
@@ -52,12 +58,16 @@ class QAFCPhysFormerTrainer(BaseTrainer):
         # Load pretrained PhysFormer weights if specified
         self._load_pretrained_physformer(config)
 
-        # Phase tracking
-        self.current_phase = 1
-        self.phase_boundary = config.TRAIN.QAFC.PHASE_BOUNDARY  # e.g., 70
-
-        # Optimizer with parameter groups
-        self.optimizer = self._create_optimizer(config)
+        # Phase 2: Load Phase 1 checkpoint and freeze quality branch
+        if self.training_phase == 2:
+            self._load_phase1_checkpoint(config)
+            self._freeze_quality_branch()
+            self.optimizer = self._create_optimizer_phase2(config)
+            print(f"Phase 2 initialized: Quality branch frozen, fine-tuning FiLM + backbone")
+        else:
+            # Phase 1: Normal joint training
+            self.optimizer = self._create_optimizer(config)
+            print(f"Phase 1 initialized: Joint training of all components")
 
         # Loss functions
         self.criterion_Pearson = Neg_Pearson()
@@ -90,7 +100,7 @@ class QAFCPhysFormerTrainer(BaseTrainer):
             print("Warning: No pretrained PhysFormer path provided. Training from scratch.")
 
     def _create_optimizer(self, config):
-        """Create optimizer with phase-aware parameter groups."""
+        """Create optimizer with parameter groups for Phase 1 (all components trainable)."""
         # Quality branch parameters
         quality_params = list(self.model.quality_spatial_encoder.parameters()) + \
                         list(self.model.quality_temporal_encoder.parameters()) + \
@@ -107,33 +117,41 @@ class QAFCPhysFormerTrainer(BaseTrainer):
             {'params': backbone_params, 'lr': config.TRAIN.LR * 0.1},  # Backbone learns slower
         ], weight_decay=1e-4)
 
-    def _switch_to_phase_2(self):
-        """Switch to phase 2: freeze quality branch, adjust learning rates."""
-        print("Switching to Phase 2: Freezing quality branch...")
-        self.current_phase = 2
+    def _load_phase1_checkpoint(self, config):
+        """Load Phase 1 checkpoint for Phase 2 fine-tuning."""
+        phase1_ckpt_path = config.TRAIN.QAFC.PHASE1_CHECKPOINT
+        if phase1_ckpt_path and os.path.exists(phase1_ckpt_path):
+            print(f"Loading Phase 1 checkpoint from {phase1_ckpt_path}")
+            phase1_state = torch.load(phase1_ckpt_path, map_location=self.device)
+            self.model.load_state_dict(phase1_state)
+            print("Phase 1 checkpoint loaded successfully")
+        else:
+            raise ValueError(f"Phase 1 checkpoint not found: {phase1_ckpt_path}")
 
-        # Freeze quality branch
+    def _freeze_quality_branch(self):
+        """Freeze quality branch parameters for Phase 2 fine-tuning."""
+        print("Freezing quality branch for Phase 2 fine-tuning...")
         for param in self.model.quality_spatial_encoder.parameters():
             param.requires_grad = False
         for param in self.model.quality_temporal_encoder.parameters():
             param.requires_grad = False
         for param in self.model.quality_head.parameters():
             param.requires_grad = False
+        print("Quality branch frozen")
 
-        # Create new optimizer with adjusted learning rates
+    def _create_optimizer_phase2(self, config):
+        """Create optimizer for Phase 2 (quality branch frozen, FiLM + backbone trainable)."""
         film_params = list(self.model.quality_aware_backbone.film_spatial.parameters()) + \
                      list(self.model.quality_aware_backbone.film_temporal.parameters())
         backbone_params = list(self.model.quality_aware_backbone.physformer.parameters())
 
-        self.optimizer = optim.AdamW([
-            {'params': film_params, 'lr': self.config.TRAIN.LR * 0.5},  # Reduced LR for fine-tuning
-            {'params': backbone_params, 'lr': self.config.TRAIN.LR * 0.1},
+        return optim.AdamW([
+            {'params': film_params, 'lr': config.TRAIN.LR},
+            {'params': backbone_params, 'lr': config.TRAIN.LR * 0.1},
         ], weight_decay=1e-4)
 
-        print("Phase 2: Quality branch frozen, FiLM+Backbone fine-tuning with adjusted LR")
-
     def train(self, data_loader):
-        """Training Loop with two-phase support."""
+        """Training Loop for QAFC-PhysFormer."""
         if data_loader["train"] is None:
             raise ValueError("No data for train")
 
@@ -141,7 +159,7 @@ class QAFCPhysFormerTrainer(BaseTrainer):
         mean_valid_losses = []
 
         for epoch in range(self.max_epoch_num):
-            print(f"==== QAFC-PhysFormer Epoch: {epoch} (Phase {self.current_phase}) ====")
+            print(f"==== QAFC-PhysFormer Epoch: {epoch} (Training Phase {self.training_phase}) ====")
             self.model.train()
 
             tbar = tqdm(data_loader["train"], ncols=80)
@@ -163,10 +181,10 @@ class QAFCPhysFormerTrainer(BaseTrainer):
                 _, quality_score_low, _, _, _ = self.model(video_low, gra_sharp=2.0)
 
                 # Normalize rPPG prediction and ground truth
-                pred_rppg_norm = (pred_rppg - torch.mean(pred_rppg, axis=-1, keepdim=True)) / \
-                                torch.std(pred_rppg, axis=-1, keepdim=True)
-                bvp_label_norm = (bvp_label - torch.mean(bvp_label, axis=-1, keepdim=True)) / \
-                                torch.std(bvp_label, axis=-1, keepdim=True)
+                pred_rppg_norm = (pred_rppg - pred_rppg.mean(dim=-1, keepdim=True)) / \
+                                pred_rppg.std(dim=-1, keepdim=True)
+                bvp_label_norm = (bvp_label - bvp_label.mean(dim=-1, keepdim=True)) / \
+                                bvp_label.std(dim=-1, keepdim=True)
 
                 # Calculate rPPG loss (NegPearson)
                 loss_rppg = self.criterion_Pearson(pred_rppg_norm, bvp_label_norm)
@@ -191,10 +209,6 @@ class QAFCPhysFormerTrainer(BaseTrainer):
             epoch_avg_loss = np.mean(epoch_losses)
             mean_training_losses.append(epoch_avg_loss)
             print(f"Epoch {epoch} Avg Loss: {epoch_avg_loss:.4f} (rPPG: {np.mean(epoch_rppg_losses):.4f}, Ranking: {np.mean(epoch_ranking_losses):.4f})")
-
-            # Check for phase switch
-            if epoch >= self.phase_boundary and self.current_phase == 1:
-                self._switch_to_phase_2()
 
             self.save_model(epoch)
 
@@ -235,10 +249,10 @@ class QAFCPhysFormerTrainer(BaseTrainer):
                 _, quality_score_low, _, _, _ = self.model(video_low, gra_sharp=2.0)
 
                 # Normalize
-                pred_rppg_norm = (pred_rppg - torch.mean(pred_rppg, axis=-1, keepdim=True)) / \
-                                torch.std(pred_rppg, axis=-1, keepdim=True)
-                bvp_label_norm = (bvp_label - torch.mean(bvp_label, axis=-1, keepdim=True)) / \
-                                torch.std(bvp_label, axis=-1, keepdim=True)
+                pred_rppg_norm = (pred_rppg - pred_rppg.mean(dim=-1, keepdim=True)) / \
+                                pred_rppg.std(dim=-1, keepdim=True)
+                bvp_label_norm = (bvp_label - bvp_label.mean(dim=-1, keepdim=True)) / \
+                                bvp_label.std(dim=-1, keepdim=True)
 
                 # Calculate loss
                 loss_rppg = self.criterion_Pearson(pred_rppg_norm, bvp_label_norm)
@@ -323,8 +337,8 @@ class QAFCPhysFormerTrainer(BaseTrainer):
                 pred_rppg, _, _, _, _ = self.model(video, gra_sharp=2.0)
 
                 # Normalize for metric calculation
-                pred_rppg_norm = (pred_rppg - torch.mean(pred_rppg, axis=-1, keepdim=True)) / \
-                                torch.std(pred_rppg, axis=-1, keepdim=True)
+                pred_rppg_norm = (pred_rppg - pred_rppg.mean(dim=-1, keepdim=True)) / \
+                                pred_rppg.std(dim=-1, keepdim=True)
 
                 batch_size = video.shape[0]
                 for i in range(batch_size):

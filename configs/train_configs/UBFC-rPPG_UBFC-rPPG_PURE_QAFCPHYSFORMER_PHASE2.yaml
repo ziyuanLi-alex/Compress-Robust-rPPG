@@ -1,18 +1,18 @@
-# QAFC-PhysFormer Training Configuration
-# Train on UBFC-rPPG, Validate on UBFC-rPPG, Test on PURE
-# Based on joint_st_phys.yaml and STVEN_pretrain.yaml patterns
+# Phase 2: Fine-tuning FiLM + Backbone (Quality Branch Frozen)
+# Loads Phase 1 checkpoint and continues training with reduced LR
 
 BASE: [""]
 TOOLBOX_MODE: "train_and_test"
 
 TRAIN:
   BATCH_SIZE: 4
-  EPOCHS: 5
-  LR: 1.0e-4
-  MODEL_FILE_NAME: "QAFCPhysFormer"
+  EPOCHS: 30  # Phase 2 only (epochs 70-100 = 30 epochs)
+  LR: 5.0e-5  # Reduced LR for fine-tuning
+  MODEL_FILE_NAME: "QAFCPhysFormer_Phase2"
   QAFC:
-    PHASE_BOUNDARY: 70
+    TRAINING_PHASE: 2  # Phase 2: Fine-tuning
     RANKING_MARGIN: 0.1
+    PHASE1_CHECKPOINT: "Phase1_Models/QAFCPhysFormer_Phase1_Epoch69.pth"  # Update path after Phase 1 completes
   DATA:
     FS: 30
     DATASET: UBFC-rPPG
@@ -87,18 +87,13 @@ TEST:
   USE_LAST_EPOCH: False
   DATA:
     FS: 30
-    DATASET: UBFC-rPPG
+    DATASET: PURE
     DO_PREPROCESS: True
     DATA_FORMAT: NCDHW
     DATA_PATH: "/home/zyuanli/dev/lib/data"
-    CRF_DATASETS:
-      "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
-      "10": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF10"
-      "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
-    CRF_LEVELS: [0, 10, 20]
-    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
+    CACHED_PATH: "/home/zyuanli/dev/lib/data/PURE-cache"
     EXP_DATA_NAME: ""
-    BEGIN: 0.9
+    BEGIN: 0.0
     END: 1.0
     PREPROCESS:
       DATA_TYPE: ["DiffNormalized"]
@@ -125,17 +120,17 @@ NUM_OF_GPU_TRAIN: 1
 MODEL:
   DROP_RATE: 0.2
   NAME: QAFCPhysFormer
-  MODEL_DIR: "PreTrainedModels"
+  MODEL_DIR: "Phase2_Models"
   QAFC_PHYSFORMER:
-    PRETRAINED_PATH: "final_model_release/PURE_PhysFormer_DiffNormalized.pth"  # Path to pretrained PhysFormer weights (optional)
+    PRETRAINED_PATH: "/home/zyuanli/dev/projects/Compress-Robust-rPPG/final_model_release/UBFC-rPPG_PhysFormer_DiffNormalized.pth"
     IMAGE_SIZE: [160, 128, 128]
     PATCHES: [4, 4, 4]
-    DIM: 64
-    FF_DIM: 256
+    DIM: 96
+    FF_DIM: 144
     NUM_HEADS: 4
     NUM_LAYERS: 12
     DROPOUT_RATE: 0.2
-    THETA: 0.2
+    THETA: 0.7
     QUALITY_CHANNELS: 64
     HIDDEN_SIZE: 128
     USE_BLOCK_PATTERN: True

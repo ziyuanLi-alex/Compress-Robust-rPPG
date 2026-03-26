@@ -299,6 +299,16 @@ class QualityAwarePhysFormer(nn.Module):
             rPPG, Score1, Score2, Score3
         """
         b, c, t, fh, fw = x.shape
+        dim = self.physformer.dim  # Dynamic dimension from model config
+
+        # Patch dimensions after stem and patch embedding:
+        # Input [B, 3, 160, 128, 128] -> Stem -> [B, dim, 160, 16, 16]
+        # Patch embed (4,4,4) stride (4,4,4) -> [B, dim, 40, 4, 4]
+        # Total patches: 40 * 4 * 4 = 640
+        num_patches_t = 40  # 160 // 4
+        num_patches_h = 4   # 128 // (2*2*2*4) = 128 // 32 = 4
+        num_patches_w = 4   # 128 // (2*2*2*4) = 128 // 32 = 4
+        num_patches_total = num_patches_t * num_patches_h * num_patches_w
 
         # PhysFormer stem
         x = self.physformer.Stem0(x)  # [B, dim//4, T, H//2, W//2]
@@ -312,17 +322,17 @@ class QualityAwarePhysFormer(nn.Module):
         # Transformer 1 (Spatial) + FiLM
         trans_features, score1 = self.physformer.transformer1(x, gra_sharp)
         if self.film_after_spatial:
-            # Reshape to [B, dim, T', H', W'] for FiLM modulation
-            trans_features = trans_features.reshape(b, 64, 40, 4, 4)
+            # Reshape to [B, dim, T', H', W'] for FiLM modulation (dynamic dims)
+            trans_features = trans_features.reshape(b, dim, num_patches_t, num_patches_h, num_patches_w)
             trans_features = self.film_spatial(trans_features, quality_features)
-            trans_features = trans_features.reshape(b, 64, 640).transpose(1, 2)
+            trans_features = trans_features.reshape(b, dim, num_patches_total).transpose(1, 2)
 
         # Transformer 2 (Temporal) + FiLM
         trans_features2, score2 = self.physformer.transformer2(trans_features, gra_sharp)
         if self.film_after_temporal:
-            trans_features2 = trans_features2.reshape(b, 64, 40, 4, 4)
+            trans_features2 = trans_features2.reshape(b, dim, num_patches_t, num_patches_h, num_patches_w)
             trans_features2 = self.film_temporal(trans_features2, quality_features)
-            trans_features2 = trans_features2.reshape(b, 64, 640).transpose(1, 2)
+            trans_features2 = trans_features2.reshape(b, dim, num_patches_total).transpose(1, 2)
 
         # Transformer 3 (No FiLM)
         trans_features3, score3 = self.physformer.transformer3(trans_features2, gra_sharp)

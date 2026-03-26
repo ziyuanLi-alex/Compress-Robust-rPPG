@@ -33,8 +33,10 @@ _C.TRAIN.MODEL_FILE_NAME = ''
 _C.TRAIN.PLOT_LOSSES_AND_LR = True
 # QAFC-PhysFormer training settings
 _C.TRAIN.QAFC = CN()
-_C.TRAIN.QAFC.PHASE_BOUNDARY = 70  # Epoch to switch from Phase 1 to Phase 2
+_C.TRAIN.QAFC.PHASE_BOUNDARY = 70  # Epoch to switch from Phase 1 to Phase 2 (for single-config mode)
 _C.TRAIN.QAFC.RANKING_MARGIN = 0.1
+_C.TRAIN.QAFC.TRAINING_PHASE = 1  # 1: Joint Training, 2: Fine-tuning (for separate-phase configs)
+_C.TRAIN.QAFC.PHASE1_CHECKPOINT = ''  # Path to Phase 1 checkpoint for Phase 2 training
 # Train.Data settings
 _C.TRAIN.DATA = CN()
 _C.TRAIN.DATA.INFO = CN()
