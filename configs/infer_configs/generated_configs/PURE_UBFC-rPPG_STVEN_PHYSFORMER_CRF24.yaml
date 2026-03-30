@@ -5,11 +5,11 @@ TEST:
   USE_LAST_EPOCH: False
   DATA:
     FS: 30
-    DATASET: UBFC-rPPG
+    DATASET: UBFC-rPPG-h264
     DO_PREPROCESS: True
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG"
-    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
+    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF24"
+    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF24-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.8
     END: 1.0
