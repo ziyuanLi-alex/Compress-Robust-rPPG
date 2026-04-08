@@ -26,31 +26,31 @@ CRF configs are generated from `*_BASIC.yaml` templates:
 
 ```bash
 # PhysFormer (PURE-trained)
-bash scripts/inference/generate_batch_configs.sh \
+bash scripts/inference/generate_batch_configs_ubfcrppg.sh \
     --config configs/infer_configs/PURE_UBFC-rPPG_PHYSFORMER_BASIC.yaml \
     --start_crf 14 --end_crf 24 --step_crf 2 --include_crf0 \
     --output_dir configs/infer_configs/PURE_PhysFormer_CRF
 
 # PhysFormer (SCAMPS-trained)
-bash scripts/inference/generate_batch_configs.sh \
+bash scripts/inference/generate_batch_configs_ubfcrppg.sh \
     --config configs/infer_configs/SCAMPS_UBFC-rPPG_PHYSFORMER_BASIC.yaml \
     --start_crf 14 --end_crf 24 --step_crf 2 --include_crf0 \
     --output_dir configs/infer_configs/SCAMPS_PhysFormer_CRF
 
 # PhysFormer (UBFC-trained)
-bash scripts/inference/generate_batch_configs.sh \
+bash scripts/inference/generate_batch_configs_ubfcrppg.sh \
     --config configs/infer_configs/UBFC_UBFC-rPPG_PHYSFORMER_BASIC.yaml \
     --start_crf 14 --end_crf 24 --step_crf 2 --include_crf0 \
     --output_dir configs/infer_configs/UBFC_PhysFormer_CRF
 
 # PhysMamba (PURE-trained)
-bash scripts/inference/generate_batch_configs.sh \
+bash scripts/inference/generate_batch_configs_ubfcrppg.sh \
     --config configs/infer_configs/PURE_UBFC-rPPG_PHYSMAMBA_BASIC.yaml \
     --start_crf 14 --end_crf 24 --step_crf 2 --include_crf0 \
     --output_dir configs/infer_configs/PURE_PhysMamba_CRF
 
 # PhysMamba (UBFC-trained)
-bash scripts/inference/generate_batch_configs.sh \
+bash scripts/inference/generate_batch_configs_ubfcrppg.sh \
     --config configs/infer_configs/UBFC_UBFC-rPPG_PHYSMAMBA_BASIC.yaml \
     --start_crf 14 --end_crf 24 --step_crf 2 --include_crf0 \
     --output_dir configs/infer_configs/UBFC_PhysMamba_CRF
@@ -164,7 +164,7 @@ The base config `PURE_UBFC-rPPG_STVEN_PHYSFORMER_BASIC.yaml` was aligned with `U
 ### Generating Batch Configs
 
 ```bash
-bash scripts/inference/generate_batch_configs.sh \
+bash scripts/inference/generate_batch_configs_ubfcrppg.sh \
     --config configs/infer_configs/PURE_UBFC-rPPG_STVEN_PHYSFORMER_BASIC.yaml \
     --start_crf 14 --end_crf 24 --step_crf 2 --include_crf0 \
     --output_dir configs/infer_configs/generated_configs
