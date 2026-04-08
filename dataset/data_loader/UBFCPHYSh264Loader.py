@@ -109,7 +109,7 @@ class UBFCPHYSh264Loader(BaseLoader):
         filtered_inputs = []
 
         for input in base_inputs:
-            input_name = input.split(os.sep)[-1].split(".")[0].rsplit("_", 1)[0]
+            input_name = input.split(os.sep)[-1].split(".")[0].rsplit("_input", 1)[0]
             if (
                 self.filtering.USE_EXCLUSION_LIST
                 and input_name in self.filtering.EXCLUSION_LIST

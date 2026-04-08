@@ -78,10 +78,13 @@ for crf in "${crf_values[@]}"; do
     # Replace DATA_PATH: raw data path -> CRF-specific path
     # Handles /path/UBFC-Phys/RawData or /path/RawData
     sed -i "s|/UBFC-Phys\(-CRF[0-9]*\)\?/RawData\"|/UBFC-Phys-CRF$crf/RawData\"|g" "$output_config"
-    sed -i "s|DATA_PATH: \"/mnt/k/RawData\"|DATA_PATH: \"/mnt/k/UBFC-Phys-CRF$crf/RawData\"|g" "$output_config"
+    sed -i "s|DATA_PATH: \"/mnt/k/RawData\"|DATA_PATH: \"/mnt/h/lib/UBFC-Phys-CRF$crf\"|g" "$output_config"
+    sed -i "s|DATA_PATH: \"/mnt/h/lib/RawData\"|DATA_PATH: \"/mnt/h/lib/UBFC-Phys-CRF$crf\"|g" "$output_config"
 
     # Replace CACHED_PATH: /path/UBFC-Phys-cache -> /path/UBFC-Phys-CRF{N}-cache
     sed -i "s|/UBFC-Phys\(-CRF[0-9]*\)\?-cache\"|/UBFC-Phys-CRF$crf-cache\"|g" "$output_config"
+    sed -i "s|CACHED_PATH: \"/mnt/k/UBFC-Phys-cache\"|CACHED_PATH: \"/mnt/h/lib/UBFC-Phys-CRF$crf-cache\"|g" "$output_config"
+    sed -i "s|CACHED_PATH: \"/mnt/h/lib/UBFC-Phys-cache\"|CACHED_PATH: \"/mnt/h/lib/UBFC-Phys-CRF$crf-cache\"|g" "$output_config"
 
     echo "Created: $output_config"
 done

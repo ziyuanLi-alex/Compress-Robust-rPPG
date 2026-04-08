@@ -49,6 +49,23 @@ done
 bash scripts/inference/compress_ubfcphys_crf.sh 14
 ```
 
+### Re-compress from CRF0 (Space-Saving)
+
+If you already have CRF0 videos, you can re-compress from them instead of the raw AVI files. This saves disk space by avoiding repeated reads of the large raw files:
+
+```bash
+# Re-compress from CRF0 at all CRF levels (source: /mnt/h/lib/UBFC-Phys-CRF0)
+for crf in 14 16 18 20 22 24; do
+    bash scripts/inference/compress_ubfcphys_from_crf0.sh $crf
+done
+
+# Or re-compress a single CRF level
+bash scripts/inference/compress_ubfcphys_from_crf0.sh 14
+
+# Custom paths
+bash scripts/inference/compress_ubfcphys_from_crf0.sh 14 /mnt/h/lib/UBFC-Phys-CRF0 /mnt/h/lib/UBFC-Phys-CRF14
+```
+
 Output structure:
 ```
 /mnt/k/
@@ -156,7 +173,8 @@ Raw logs: `results/inference_logs/<model>/<config_name>.log`
 | File | Purpose |
 |---|---|
 | `scripts/inference/ubfcphys_remove_excluded.sh` | Delete excluded videos from raw data |
-| `scripts/inference/compress_ubfcphys_crf.sh` | ffmpeg compression script |
+| `scripts/inference/compress_ubfcphys_crf.sh` | ffmpeg compression (from raw AVI) |
+| `scripts/inference/compress_ubfcphys_from_crf0.sh` | ffmpeg re-compression (from CRF0 MP4) |
 | `scripts/inference/generate_batch_configs_ubfcphys.sh` | CRF config generator for UBFC-PHYS |
 | `dataset/data_loader/UBFCPHYSh264Loader.py` | Compressed UBFC-PHYS dataloader |
 | `configs/infer_configs/PURE_UBFC-Phys_PHYSFORMER_BASIC.yaml` | PhysFormer base config |

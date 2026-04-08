@@ -1,7 +1,7 @@
 BASE: ['']
 TOOLBOX_MODE: "only_test"
 TEST:
-  METRICS: ['MAE', 'RMSE', 'MAPE', 'Pearson', 'SNR', 'BA']
+  METRICS: ['MAE', 'RMSE', 'MAPE', 'Pearson', 'SNR']
   USE_LAST_EPOCH: False
   DATA:
     FILTERING:
@@ -13,11 +13,11 @@ TEST:
       SELECT_TASKS: True
       TASK_LIST: ['T1', 'T2', 'T3']
     FS: 35
-    DATASET: UBFC-PHYS
+    DATASET: UBFC-PHYS-h264
     DO_PREPROCESS: True
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/mnt/k/RawData"
-    CACHED_PATH: "/mnt/h/lib/UBFC-Phys-cache"
+    DATA_PATH: "/mnt/h/lib/UBFC-Phys-CRF20"
+    CACHED_PATH: "/mnt/h/lib/UBFC-Phys-CRF20-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.0
     END: 1.0
@@ -28,7 +28,7 @@ TEST:
       CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
-        BACKEND: 'Y5F'
+        BACKEND: 'HC'
         USE_LARGE_FACE_BOX: True
         LARGE_BOX_COEF: 1.5
         DETECTION:
