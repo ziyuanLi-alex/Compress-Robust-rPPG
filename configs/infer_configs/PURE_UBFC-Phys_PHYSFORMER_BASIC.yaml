@@ -5,7 +5,7 @@ TEST:
   USE_LAST_EPOCH: False
   DATA:
     FILTERING:
-      USE_EXCLUSION_LIST: True
+      USE_EXCLUSION_LIST: False
       EXCLUSION_LIST: [
       's3_T1', 's8_T1', 's9_T1',
       's1_T2', 's4_T2', 's6_T2', 's8_T2', 's9_T2', 's11_T2', 's12_T2', 's13_T2', 's14_T2',
@@ -16,8 +16,8 @@ TEST:
     DATASET: UBFC-PHYS
     DO_PREPROCESS: True
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/mnt/k/RawData"
-    CACHED_PATH: "/mnt/h/lib/UBFC-Phys-cache"
+    DATA_PATH: "/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys"
+    CACHED_PATH: "/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.0
     END: 1.0
@@ -28,7 +28,7 @@ TEST:
       CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
-        BACKEND: 'Y5F'
+        BACKEND: 'HC'
         USE_LARGE_FACE_BOX: True
         LARGE_BOX_COEF: 1.5
         DETECTION:

@@ -75,16 +75,11 @@ for crf in "${crf_values[@]}"; do
     # UBFC-PHYS -> UBFC-PHYS-h264 dataset name
     sed -i 's/DATASET: UBFC-PHYS\s*$/DATASET: UBFC-PHYS-h264/g' "$output_config"
 
-    # Replace DATA_PATH: raw data path -> CRF-specific path
-    # Handles /path/UBFC-Phys/RawData or /path/RawData
-    sed -i "s|/UBFC-Phys\(-CRF[0-9]*\)\?/RawData\"|/UBFC-Phys-CRF$crf/RawData\"|g" "$output_config"
-    sed -i "s|DATA_PATH: \"/mnt/k/RawData\"|DATA_PATH: \"/mnt/h/lib/UBFC-Phys-CRF$crf\"|g" "$output_config"
-    sed -i "s|DATA_PATH: \"/mnt/h/lib/RawData\"|DATA_PATH: \"/mnt/h/lib/UBFC-Phys-CRF$crf\"|g" "$output_config"
+    # Replace DATA_PATH: /home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys -> /home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF$crf
+    sed -i "s|DATA_PATH: \"/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys\"|DATA_PATH: \"/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF$crf\"|g" "$output_config"
 
-    # Replace CACHED_PATH: /path/UBFC-Phys-cache -> /path/UBFC-Phys-CRF{N}-cache
-    sed -i "s|/UBFC-Phys\(-CRF[0-9]*\)\?-cache\"|/UBFC-Phys-CRF$crf-cache\"|g" "$output_config"
-    sed -i "s|CACHED_PATH: \"/mnt/k/UBFC-Phys-cache\"|CACHED_PATH: \"/mnt/h/lib/UBFC-Phys-CRF$crf-cache\"|g" "$output_config"
-    sed -i "s|CACHED_PATH: \"/mnt/h/lib/UBFC-Phys-cache\"|CACHED_PATH: \"/mnt/h/lib/UBFC-Phys-CRF$crf-cache\"|g" "$output_config"
+    # Replace CACHED_PATH: /home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-cache -> /home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF$crf-cache
+    sed -i "s|CACHED_PATH: \"/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-cache\"|CACHED_PATH: \"/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF$crf-cache\"|g" "$output_config"
 
     echo "Created: $output_config"
 done

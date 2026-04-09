@@ -5,7 +5,7 @@ TEST:
   USE_LAST_EPOCH: False
   DATA:
     FILTERING:
-      USE_EXCLUSION_LIST: False
+      USE_EXCLUSION_LIST: True
       EXCLUSION_LIST: [
       's3_T1', 's8_T1', 's9_T1',
       's1_T2', 's4_T2', 's6_T2', 's8_T2', 's9_T2', 's11_T2', 's12_T2', 's13_T2', 's14_T2',
@@ -16,8 +16,8 @@ TEST:
     DATASET: UBFC-PHYS-h264
     DO_PREPROCESS: True
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF0"
-    CACHED_PATH: "/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF0-cache"
+    DATA_PATH: "/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF14"
+    CACHED_PATH: "/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF14-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.0
     END: 1.0
@@ -25,7 +25,7 @@ TEST:
       DATA_TYPE: ['DiffNormalized']
       LABEL_TYPE: DiffNormalized
       DO_CHUNK: True
-      CHUNK_LENGTH: 160
+      CHUNK_LENGTH: 128
       CROP_FACE:
         DO_CROP_FACE: True
         BACKEND: 'HC'
@@ -43,19 +43,11 @@ NUM_OF_GPU_TRAIN: 1
 LOG:
   PATH: runs/exp
 MODEL:
-  DROP_RATE: 0.1
-  NAME: PhysFormer
-  PHYSFORMER:
-    PATCH_SIZE: 4
-    DIM: 96
-    FF_DIM: 144
-    NUM_HEADS: 4
-    NUM_LAYERS: 12
-    THETA: 0.7
+  NAME: PhysMamba
 INFERENCE:
   BATCH_SIZE: 4
   EVALUATION_METHOD: "FFT"
   EVALUATION_WINDOW:
     USE_SMALLER_WINDOW: True
     WINDOW_SIZE: 30
-  MODEL_PATH: "./final_model_release/PURE_PhysFormer_DiffNormalized.pth"
+  MODEL_PATH: "./final_model_release/PURE_PhysMamba_DiffNormalized.pth"

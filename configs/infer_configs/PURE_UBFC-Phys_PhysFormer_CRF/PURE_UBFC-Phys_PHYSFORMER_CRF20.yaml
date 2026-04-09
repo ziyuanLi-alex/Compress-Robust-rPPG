@@ -1,11 +1,11 @@
 BASE: ['']
 TOOLBOX_MODE: "only_test"
 TEST:
-  METRICS: ['MAE', 'RMSE', 'MAPE', 'Pearson', 'SNR']
+  METRICS: ['MAE', 'RMSE', 'MAPE', 'Pearson', 'SNR', 'BA']
   USE_LAST_EPOCH: False
   DATA:
     FILTERING:
-      USE_EXCLUSION_LIST: True
+      USE_EXCLUSION_LIST: False
       EXCLUSION_LIST: [
       's3_T1', 's8_T1', 's9_T1',
       's1_T2', 's4_T2', 's6_T2', 's8_T2', 's9_T2', 's11_T2', 's12_T2', 's13_T2', 's14_T2',
@@ -16,8 +16,8 @@ TEST:
     DATASET: UBFC-PHYS-h264
     DO_PREPROCESS: True
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/mnt/h/lib/UBFC-Phys-CRF20"
-    CACHED_PATH: "/mnt/h/lib/UBFC-Phys-CRF20-cache"
+    DATA_PATH: "/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF20"
+    CACHED_PATH: "/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF20-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.0
     END: 1.0

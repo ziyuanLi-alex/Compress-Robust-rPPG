@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "infer PURE_UBFC-rPPG_STVEN_PHYSFORMER_BASIC",
             "type": "debugpy",
@@ -13,10 +14,15 @@
             ]
         },
         {
-            "name": "Python Debugger: Python File",
+            "name": "infer PURE_UBFC-Phys_PhysFormer_CRF",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}"
+            "program": "${workspaceFolder}/main.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config_file",
+                "configs/infer_configs/PURE_UBFC-Phys_PhysFormer_CRF/PURE_UBFC-Phys_PHYSFORMER_CRF0.yaml"
+            ]
         }
     ]
 }

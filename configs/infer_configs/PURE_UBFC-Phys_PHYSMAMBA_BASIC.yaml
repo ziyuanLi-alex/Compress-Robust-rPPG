@@ -16,8 +16,8 @@ TEST:
     DATASET: UBFC-PHYS
     DO_PREPROCESS: True
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/mnt/k/RawData"
-    CACHED_PATH: "/mnt/k/UBFC-Phys-cache"
+    DATA_PATH: "/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys"
+    CACHED_PATH: "/home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.0
     END: 1.0
@@ -28,7 +28,7 @@ TEST:
       CHUNK_LENGTH: 128
       CROP_FACE:
         DO_CROP_FACE: True
-        BACKEND: 'Y5F'
+        BACKEND: 'HC'
         USE_LARGE_FACE_BOX: True
         LARGE_BOX_COEF: 1.5
         DETECTION:

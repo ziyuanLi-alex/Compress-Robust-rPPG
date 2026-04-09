@@ -63,7 +63,11 @@ done
 bash scripts/inference/compress_ubfcphys_from_crf0.sh 14
 
 # Custom paths
-bash scripts/inference/compress_ubfcphys_from_crf0.sh 14 /mnt/h/lib/UBFC-Phys-CRF0 /mnt/h/lib/UBFC-Phys-CRF14
+bash scripts/inference/compress_ubfcphys_from_crf0.sh 14 ~/dev/lib/data/UBFC-Phys-CRF0 ~/dev/lib/data/UBFC-Phys-CRF14
+
+    for crf in 14 16 18 20 22 24; do
+        bash scripts/inference/compress_ubfcphys_from_crf0.sh "$crf" ~/dev/lib/UBFC-Phys/UBFC-Phys-CRF0 ~/dev/lib/UBFC-Phys/UBFC-Phys-CRF"$crf"
+    done
 ```
 
 Output structure:
