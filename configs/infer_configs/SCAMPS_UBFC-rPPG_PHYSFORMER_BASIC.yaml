@@ -23,10 +23,6 @@ TEST:
         BACKEND: 'HC'    # HC for Haar Cascade, Y5F for YOLO5Face
         USE_LARGE_FACE_BOX: True
         LARGE_BOX_COEF: 1.5
-        DETECTION:
-          DO_DYNAMIC_DETECTION: False
-          DYNAMIC_DETECTION_FREQUENCY : 30
-          USE_MEDIAN_FACE_BOX: False    # This should be used ONLY if dynamic detection is used
       RESIZE:
         H: 128
         W: 128

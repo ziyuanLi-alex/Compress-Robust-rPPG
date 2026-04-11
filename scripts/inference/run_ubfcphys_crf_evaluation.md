@@ -183,3 +183,64 @@ Raw logs: `results/inference_logs/<model>/<config_name>.log`
 | `dataset/data_loader/UBFCPHYSh264Loader.py` | Compressed UBFC-PHYS dataloader |
 | `configs/infer_configs/PURE_UBFC-Phys_PHYSFORMER_BASIC.yaml` | PhysFormer base config |
 | `configs/infer_configs/PURE_UBFC-Phys_PHYSMAMBA_BASIC.yaml` | PhysMamba base config |
+
+## UBFC-Phys CRF Evaluation (Inference & Parsing)
+● Great question — this is a really important insight for your research. Let me think through the implications.
+
+  What This Tells You
+
+  The core finding is: the model doesn't inherently struggle with compressed video — it struggles with compressed video that
+  hasn't been spatially smoothed enough.
+
+  At 1024×1024, compression artifacts are tiny relative to facial features. The 8× downscale to 128×128 acts as an implicit
+  denoising step. At 640×480, the 5× downscale doesn't smooth enough — artifacts survive and dominate the subtle rPPG chromatic
+  signal (~0.1-1% intensity variation).
+
+  PhysFormer is learning fine-grained spatial-temporal color variation. Compression introduces block-structured spatial noise
+  and temporal quantization jitter that mimics the kind of subtle variation the network expects from rPPG. The network can't
+  distinguish the signal from the artifact noise at that resolution.
+
+  The Methodology You Can Derive
+
+  There are three concrete directions, roughly ordered by implementation effort:
+
+  1. Preprocessing-level: Aggressive spatial smoothing before network input
+
+  Apply a Gaussian blur or mean filter to the 128×128 input frames. This is the free lunch — you're just making the implicit
+  downsampling effect explicit for lower-resolution videos. You could even make it adaptive: stronger smoothing for lower CRF
+  (more artifacts) or lower original resolution. The tradeoff is obvious — you'll also smooth the rPPG signal — but the
+  UBFC-Phys result proves the signal survives very aggressive averaging, so there's headroom.
+
+  2. Training-level: Data augmentation with artifact simulation
+
+  Compress training videos with varying CRF levels to simulate artifact patterns, then train on a mix. This is the most robust
+  approach because:
+  - You're teaching the network that compression artifacts are noise to ignore, not signal to learn
+  - The network learns invariance to block artifacts, ringing, and color quantization in its feature representations
+  - You don't need to know the exact resolution or CRF at inference time
+
+  The UBFC-Phys result essentially gives you a free upper bound — if the signal survives heavy downsampling, it means the
+  bottleneck for UBFC-rPPG isn't signal strength, it's artifact contamination. Training with artifact-augmented data directly
+  addresses this.
+
+  3. Architecture-level: Compression-aware frontend
+
+  Add a learnable spatial smoothing / denoising layer in the frontend (before the temporal transformer in PhysFormer). This
+  could be:
+  - A small CNN that learns to suppress block artifacts while preserving face structure
+  - A learnable wavelet decomposition that separates smooth low-frequency components (where rPPG lives) from high-frequency
+  block artifact energy
+  - An explicit deblocking filter like you'd find in a video decoder, but with learned parameters
+
+  This directly addresses the fact that the current pipeline has no explicit defense against compression noise — it just assumes
+   clean inputs (which UBFC-Phys happens to deliver because of the resolution).
+
+  Bottom Line
+
+  The discovery reveals a confounding variable in your evaluation: resolution is masking the true degradation from compression.
+  Your method actually performs worse on compressed videos than the UBFC-Phys numbers suggest — UBFC-Phys just hides it through
+  brute-force spatial averaging.
+
+  For your paper, the actionable takeaway is: add a learnable spatial denoising module or artifact-aware training augmentation,
+  and demonstrate that UBFC-rPPG performance under compression recovers to near-UBFC-Phys levels. That's a clean before/after
+  story.
