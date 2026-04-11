@@ -11,6 +11,7 @@ store_physnet_model
 PreprocessedData
 PreTrainedModels
 runs
+results/checkpoints/
 temp
 facial_region_test.py
 interp_test.py
