@@ -135,10 +135,79 @@ CSV files in `results/`:
 - `UBFC_PhysFormer_CRF.csv`
 - `PURE_PhysMamba_CRF.csv`
 - `UBFC_PhysMamba_CRF.csv`
+- `UBFC_Unsupervised_CRF.csv`
 
 Each CSV: Config, MAE, MAE_Std, RMSE, RMSE_Std, MAPE, MAPE_Std, Pearson, Pearson_Std, SNR, SNR_Std
 
 Raw logs: `results/inference_logs/<model>/<config_name>.log`
+
+## Unsupervised Methods
+
+Evaluates traditional signal processing methods on H.264-compressed UBFC-rPPG videos at various CRF levels.
+
+### Methods
+
+| Method | Description |
+|---|---|
+| ICA | Independent Component Analysis |
+| POS | Plane Orthogonal to Skin |
+| CHROM | Chrominance-based method |
+| GREEN | Green channel method |
+| LGI | Local Group Invariance |
+| PBV | Pulse Blood Volume |
+| OMIT | Orthogonal Motion Imaging Transform |
+
+### Test Data
+
+- Dataset: UBFC-rPPG-h264 at CRFs 0, 14, 16, 18, 20, 22, 24
+- Backend: HC (Haar Cascade, as in base config)
+- Data type: Raw (no normalization)
+- Evaluation: FFT-based heart rate estimation with 10s window
+
+### Generating Batch Configs
+
+```bash
+bash scripts/inference/generate_batch_configs_ubfcrppg.sh \
+    --config configs/infer_configs/UBFC-rPPG_UNSUPERVISED.yaml \
+    --start_crf 14 --end_crf 24 --step_crf 2 --include_crf0 \
+    --output_dir configs/infer_configs/UBFC_Unsupervised_CRF
+```
+
+### DO_PREPROCESS Convention
+
+Each CRF level processes independently. Set `DO_PREPROCESS: True` for the first run of each CRF config, then `False` to reuse cached data.
+
+| Config | DO_PREPROCESS (1st run) | DO_PREPROCESS (subsequent) |
+|---|---|---|
+| `UBFC-rPPG_UNSUPERVISED_CRF0.yaml` | `True` | `False` |
+| `UBFC-rPPG_UNSUPERVISED_CRF14.yaml` | `True` | `False` |
+| `UBFC-rPPG_UNSUPERVISED_CRF16.yaml` | `True` | `False` |
+| `UBFC-rPPG_UNSUPERVISED_CRF18.yaml` | `True` | `False` |
+| `UBFC-rPPG_UNSUPERVISED_CRF20.yaml` | `True` | `False` |
+| `UBFC-rPPG_UNSUPERVISED_CRF22.yaml` | `True` | `False` |
+| `UBFC-rPPG_UNSUPERVISED_CRF24.yaml` | `True` | `False` |
+
+### Running Inference
+
+```bash
+bash scripts/inference/batch_inference.sh \
+    configs/infer_configs/UBFC_Unsupervised_CRF \
+    results/inference_logs/UBFC_Unsupervised
+
+python scripts/inference/parse_inference_logs.py \
+    --log_dir results/inference_logs/UBFC_Unsupervised \
+    --output_csv results/UBFC_Unsupervised_CRF.csv
+```
+
+### Output
+
+CSV: `results/UBFC_Unsupervised_CRF.csv`
+
+Columns: Config, MAE, MAE_Std, RMSE, RMSE_Std, MAPE, MAPE_Std, Pearson, Pearson_Std, SNR, SNR_Std (for each method: ICA, POS, CHROM, GREEN, LGI, PBV, OMIT)
+
+Raw logs: `results/inference_logs/UBFC_Unsupervised/<config_name>.log`
+
+---
 
 ## STVEN-PhysFormer (Joint Model)
 
