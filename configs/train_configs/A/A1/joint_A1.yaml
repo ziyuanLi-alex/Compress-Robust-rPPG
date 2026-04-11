@@ -3,25 +3,22 @@
 BASE: [""]
 TOOLBOX_MODE: "train_and_test"
 TRAIN:
-  BATCH_SIZE: 2
+  BATCH_SIZE: 8
   EPOCHS: 8
   LR: 1e-3
-  SEED: 42
-  MODEL_FILE_NAME: "A1_no_pretrain"
-  PLOT_LOSSES_AND_LR: True
   DATA:
     FS: 30
     DATASET: UBFC-rPPG
-    DO_PREPROCESS: True
+    DO_PREPROCESS: False
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/home/zyuanli/dev/lib/data"
+    DATA_PATH: "/root/data"
     CRF_DATASETS:
-      "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
-      "14": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF14"
-      "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
-      "24": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF24"
+      "0": "/root/data/UBFC-rPPG-CRF0"
+      "14": "/root/data/UBFC-rPPG-CRF14"
+      "20": "/root/data/UBFC-rPPG-CRF20"
+      "24": "/root/data/UBFC-rPPG-CRF24"
     CRF_LEVELS: [0, 14, 20, 24]
-    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
+    CACHED_PATH: "/root/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.0
     END: 0.79
@@ -33,13 +30,9 @@ TRAIN:
       CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
-        BACKEND: "Y5F"
+        BACKEND: "HC"
         USE_LARGE_FACE_BOX: True
         LARGE_BOX_COEF: 1.5
-        DETECTION:
-          DO_DYNAMIC_DETECTION: False
-          DYNAMIC_DETECTION_FREQUENCY: 30
-          USE_MEDIAN_FACE_BOX: False
       RESIZE:
         H: 128
         W: 128
@@ -47,16 +40,16 @@ VALID:
   DATA:
     FS: 30
     DATASET: UBFC-rPPG
-    DO_PREPROCESS: True
+    DO_PREPROCESS: False
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/home/zyuanli/dev/lib/data"
+    DATA_PATH: "/root/data"
     CRF_DATASETS:
-      "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
-      "14": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF14"
-      "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
-      "24": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF24"
+      "0": "/root/data/UBFC-rPPG-CRF0"
+      "14": "/root/data/UBFC-rPPG-CRF14"
+      "20": "/root/data/UBFC-rPPG-CRF20"
+      "24": "/root/data/UBFC-rPPG-CRF24"
     CRF_LEVELS: [0, 14, 20, 24]
-    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
+    CACHED_PATH: "/root/data/UBFC-rPPG-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.79
     END: 0.90
@@ -68,13 +61,9 @@ VALID:
       CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
-        BACKEND: "Y5F"
+        BACKEND: "HC"
         USE_LARGE_FACE_BOX: True
         LARGE_BOX_COEF: 1.5
-        DETECTION:
-          DO_DYNAMIC_DETECTION: False
-          DYNAMIC_DETECTION_FREQUENCY: 30
-          USE_MEDIAN_FACE_BOX: False
       RESIZE:
         H: 128
         W: 128
@@ -84,10 +73,10 @@ TEST:
   DATA:
     FS: 30
     DATASET: UBFC-rPPG-h264
-    DO_PREPROCESS: True
+    DO_PREPROCESS: False
     DATA_FORMAT: NCDHW
-    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
-    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20-cache"
+    DATA_PATH: "/root/data/UBFC-rPPG-CRF20"
+    CACHED_PATH: "/root/data/UBFC-rPPG-CRF20-cache"
     EXP_DATA_NAME: ""
     BEGIN: 0.90
     END: 1.0
@@ -99,13 +88,9 @@ TEST:
       CHUNK_LENGTH: 160
       CROP_FACE:
         DO_CROP_FACE: True
-        BACKEND: "Y5F"
+        BACKEND: "HC"
         USE_LARGE_FACE_BOX: True
         LARGE_BOX_COEF: 1.5
-        DETECTION:
-          DO_DYNAMIC_DETECTION: False
-          DYNAMIC_DETECTION_FREQUENCY: 30
-          USE_MEDIAN_FACE_BOX: False
       RESIZE:
         H: 128
         W: 128
@@ -127,7 +112,7 @@ MODEL:
     use_bitrate_labels: True
     num_bitrate_levels: 4  # CRF [0, 14, 20, 24]
   PHYSFORMER:
-    PRETRAINED_PATH: "/home/zyuanli/dev/projects/Compress-Robust-rPPG/final_model_release/PURE_PhysFormer_DiffNormalized.pth"
+    PRETRAINED_PATH: "/root/Compress-Robust-rPPG/final_model_release/PURE_PhysFormer_DiffNormalized.pth"
     PATCH_SIZE: 4
     DIM: 96
     FF_DIM: 144
@@ -138,5 +123,5 @@ MODEL:
     PATCHES: [4, 4, 4]
     DROPOUT_RATE: 0.2
 INFERENCE:
-  BATCH_SIZE: 4
+  BATCH_SIZE: 8
   MODEL_PATH: ""
