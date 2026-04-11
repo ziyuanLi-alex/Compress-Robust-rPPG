@@ -80,21 +80,6 @@ Original uses 3 bitrate levels (500/1000/1500 kb/s H.264/H.265).
 | Global residual | Not used | Output = Network(Input) + Input | Faster convergence, artifact learning |
 | Frame length | 64 | 160 | Matches PhysFormer's temporal context requirement |
 
-### 2.3 Current Results
-
-STVEN-PhysFormer evaluated on PURE→UBFC-rPPG at varying CRF levels:
-
-| CRF | MAE | RMSE | MAPE | Pearson | SNR |
-|-----|-----|------|------|---------|-----|
-| 0 | 0.28 | 1.21 | 0.25 | 0.998 | 4.45 |
-| 16 | 2.50 | 8.31 | 2.45 | 0.915 | 1.27 |
-| 18 | 1.48 | 3.83 | 1.31 | 0.982 | 0.31 |
-| 20 | 1.20 | 3.35 | 1.22 | 0.985 | N/A |
-| 22 | 7.59 | 14.74 | 7.33 | 0.787 | N/A |
-| 24 | 14.90 | 22.31 | 17.22 | 0.206 | N/A |
-
-**Notable anomaly:** CRF 16 shows worse performance than CRF 18-20 (MAE 2.50 vs 1.48/1.20, RMSE 8.31 vs 3.83/3.35).
-
 ### 2.4 Current Training Configuration
 
 **STVEN Pretraining (`STVEN_pretrain.yaml`):**

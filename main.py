@@ -390,6 +390,8 @@ if __name__ == "__main__":
         # unsupervised method dataloader
         if config.UNSUPERVISED.DATA.DATASET == "UBFC-rPPG":
             unsupervised_loader = data_loader.UBFCrPPGLoader.UBFCrPPGLoader
+        elif config.UNSUPERVISED.DATA.DATASET == "UBFC-rPPG-h264":
+            unsupervised_loader = data_loader.UBFCrPPGh264Loader.UBFCrPPGh264Loader
         elif config.UNSUPERVISED.DATA.DATASET == "PURE":
             unsupervised_loader = data_loader.PURELoader.PURELoader
         elif config.UNSUPERVISED.DATA.DATASET == "SCAMPS":
@@ -404,7 +406,7 @@ if __name__ == "__main__":
             unsupervised_loader = data_loader.iBVPLoader.iBVPLoader
         else:
             raise ValueError(
-                "Unsupported dataset! Currently supporting UBFC-rPPG, PURE, MMPD, \
+                "Unsupported dataset! Currently supporting UBFC-rPPG, UBFC-rPPG-h264, PURE, MMPD, \
                              SCAMPS, BP4D+, UBFC-PHYS and iBVP."
             )
 

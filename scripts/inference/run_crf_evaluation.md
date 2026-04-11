@@ -175,17 +175,19 @@ bash scripts/inference/generate_batch_configs_ubfcrppg.sh \
 
 ### DO_PREPROCESS Convention
 
-Each CRF level processes independently. Set `DO_PREPROCESS: True` for the first run of each CRF config, then `False` to reuse cached data.
+Each CRF level uses `Raw` data type and requires independent preprocessing. Set `DO_PREPROCESS: True` for the first run of each CRF config to generate the cache, then `False` for subsequent inference runs.
 
-| Config | DO_PREPROCESS (1st run) | DO_PREPROCESS (subsequent) |
-|---|---|---|
-| `UBFC-rPPG_UNSUPERVISED_CRF0.yaml` | `True` | `False` |
-| `UBFC-rPPG_UNSUPERVISED_CRF14.yaml` | `True` | `False` |
-| `UBFC-rPPG_UNSUPERVISED_CRF16.yaml` | `True` | `False` |
-| `UBFC-rPPG_UNSUPERVISED_CRF18.yaml` | `True` | `False` |
-| `UBFC-rPPG_UNSUPERVISED_CRF20.yaml` | `True` | `False` |
-| `UBFC-rPPG_UNSUPERVISED_CRF22.yaml` | `True` | `False` |
-| `UBFC-rPPG_UNSUPERVISED_CRF24.yaml` | `True` | `False` |
+| Config | DO_PREPROCESS (1st run) | DO_PREPROCESS (subsequent) | Notes |
+|---|---|---|---|
+| `UBFC-rPPG_UNSUPERVISED_CRF0.yaml` | `True` | `False` | Generates Raw data cache |
+| `UBFC-rPPG_UNSUPERVISED_CRF14.yaml` | `True` | `False` | Generates Raw data cache |
+| `UBFC-rPPG_UNSUPERVISED_CRF16.yaml` | `True` | `False` | Generates Raw data cache |
+| `UBFC-rPPG_UNSUPERVISED_CRF18.yaml` | `True` | `False` | Generates Raw data cache |
+| `UBFC-rPPG_UNSUPERVISED_CRF20.yaml` | `True` | `False` | Generates Raw data cache |
+| `UBFC-rPPG_UNSUPERVISED_CRF22.yaml` | `True` | `False` | Generates Raw data cache |
+| `UBFC-rPPG_UNSUPERVISED_CRF24.yaml` | `True` | `False` | Generates Raw data cache |
+
+**Note:** Unlike neural network methods that use `DiffNormalized` data, unsupervised methods use `Raw` data. The caches are not shared between data types.
 
 ### Running Inference
 

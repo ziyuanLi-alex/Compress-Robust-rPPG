@@ -1,0 +1,127 @@
+# A2 Step 1: Pixel-level pretraining (L_cyc + L_rec)
+# Trains STVEN standalone with reconstruction + cycle consistency losses
+# Output: stven_pretrained_A2.pth (best epoch by validation loss)
+BASE: [""]
+TOOLBOX_MODE: "train_and_test"
+TRAIN:
+  BATCH_SIZE: 2
+  EPOCHS: 8
+  LR: 1e-4
+  SEED: 42
+  MODEL_FILE_NAME: "A2_pretrain"
+  PLOT_LOSSES_AND_LR: True
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG
+    DO_PREPROCESS: True
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/home/zyuanli/dev/lib/data"
+    CRF_DATASETS:
+      "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
+      "14": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF14"
+      "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
+      "24": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF24"
+    CRF_LEVELS: [0, 14, 20, 24]
+    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.0
+    END: 0.79
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        BACKEND: "Y5F"
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 30
+          USE_MEDIAN_FACE_BOX: False
+      RESIZE:
+        H: 128
+        W: 128
+VALID:
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG
+    DO_PREPROCESS: True
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/home/zyuanli/dev/lib/data"
+    CRF_DATASETS:
+      "0": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF0"
+      "14": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF14"
+      "20": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
+      "24": "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF24"
+    CRF_LEVELS: [0, 14, 20, 24]
+    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.79
+    END: 0.90
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        BACKEND: "Y5F"
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 30
+          USE_MEDIAN_FACE_BOX: False
+      RESIZE:
+        H: 128
+        W: 128
+TEST:
+  METRICS: ["MAE", "RMSE", "MAPE", "Pearson", "SNR", "BA"]
+  USE_LAST_EPOCH: True
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG-h264
+    DO_PREPROCESS: True
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20"
+    CACHED_PATH: "/home/zyuanli/dev/lib/data/UBFC-rPPG-CRF20-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.90
+    END: 1.0
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        BACKEND: "Y5F"
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 30
+          USE_MEDIAN_FACE_BOX: False
+      RESIZE:
+        H: 128
+        W: 128
+DEVICE: cuda:0
+NUM_OF_GPU_TRAIN: 1
+LOG:
+  PATH: runs/exp
+MODEL:
+  NAME: STVEN
+  MODEL_DIR: "./runs/exp/A/A2/pretrain"
+  STVEN:
+    in_channels: 3
+    out_channels: 3
+    base_channels: 16
+    num_st_blocks: 6
+    frame_length: 160
+    use_bitrate_labels: True
+    num_bitrate_levels: 4  # CRF [0, 14, 20, 24]
