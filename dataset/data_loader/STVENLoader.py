@@ -45,7 +45,7 @@ class STVENLoader(BaseLoader):
                 continue
             
             for data_dir in data_dirs:
-                subject_match = re.search('subject(\d+)', data_dir)
+                subject_match = re.search(r'subject(\d+)', data_dir)
                 if subject_match:
                     subject_index = subject_match.group(1)
                     dirs.append({
