@@ -102,6 +102,8 @@ def train_and_test(config, data_loader_dict):
         model_trainer = trainer.RhythmFormerTrainer.RhythmFormerTrainer(
             config, data_loader_dict
         )
+    elif config.MODEL.NAME == "STVEN":
+        model_trainer = trainer.STVENTrainer.STVENTrainer(config, data_loader_dict)
     elif config.MODEL.NAME == "JointSTPhys":
         model_trainer = trainer.JointSTVENPhysFormerTrainer.JointSTVENPhysFormerTrainer(
             config, data_loader_dict

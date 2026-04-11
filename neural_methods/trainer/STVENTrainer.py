@@ -41,6 +41,10 @@ class STVENTrainer(BaseTrainer):
         self.l1_loss = nn.L1Loss()
         self.mse_loss = nn.MSELoss()
 
+        # Best epoch tracking
+        self.best_val_loss = float('inf')
+        self.best_epoch = -1
+
     def train_step(self, compressed_vid, uncompressed_vid, bitrate_label):
         """
         Performs a single training step with reconstruction and cycle consistency losses.
@@ -122,8 +126,16 @@ class STVENTrainer(BaseTrainer):
                 tbar.set_description(f"Loss: {loss_total:.4f} (Rec: {loss_rec:.4f}, Cyc: {loss_cyc:.4f})")
 
             print(f"Epoch {epoch} Average Loss: {np.mean(epoch_total_loss):.4f}")
-            self.valid(data_loader)
+            val_loss = self.valid(data_loader)
             self.save_model(epoch)
+            if val_loss is not None and val_loss < self.best_val_loss:
+                self.best_val_loss = val_loss
+                self.best_epoch = epoch
+                best_path = os.path.join(self.model_dir, self.model_file_name + '_STVEN_Best.pth')
+                torch.save(self.model.state_dict(), best_path)
+                print(f'New best model at epoch {epoch}, val_loss={val_loss:.4f}')
+
+        print(f'\nTraining complete. Best epoch: {self.best_epoch}, val_loss: {self.best_val_loss:.4f}')
 
     def valid(self, data_loader):
         """
