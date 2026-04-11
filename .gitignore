@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
 *.log
+!results/**/*.log
 *.mat
 .idea
 preprocess

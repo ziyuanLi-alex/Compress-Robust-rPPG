@@ -303,17 +303,12 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
         with torch.no_grad():
             for idx, batch in enumerate(tqdm(data_loader["test"], ncols=80)):
                 compressed_vid = batch[0].float().to(self.device)
-                if self.config.TEST.DATA.DATASET == "UBFC-rPPG-h264":
-                    bvp_label = batch[1].float().to(self.device)
-                    subj_index = batch[2][0]
-                    sort_index = int(batch[3][0])
-                else:
-                    bvp_label = batch[3].float().to(self.device)
-                    # Handle indices for STVENLoader if attempting to run calculate_metrics
-                    # STVENLoader doesn't return metadata needed for detailed metrics dict keys
-                    # So we might default to simple indexing if not h264
-                    subj_index = idx
-                    sort_index = 0
+                bvp_label = batch[1].float().to(self.device)
+
+                # batch[2] and batch[3] are filename and chunk_id strings (BaseLoader format)
+                # Use them for proper indexing in predictions dict
+                subj_index = batch[2][0]  # filename string
+                sort_index = int(batch[3][0])  # chunk_id string converted to int
 
                 # Prepare student label (High Quality)
                 num_classes = self.model.stven.num_bitrate_levels
@@ -329,21 +324,12 @@ class JointSTVENPhysFormerTrainer(BaseTrainer):
                 student_rPPG = (
                     student_rPPG - torch.mean(student_rPPG, axis=-1, keepdim=True)
                 ) / torch.std(student_rPPG, axis=-1, keepdim=True)
-                # Note: bvp_label used in calculate_metrics assumes it's just raw values to be passed
 
-                batch_size = compressed_vid.shape[0]
-                for i in range(batch_size):
-                    # For UBFC-rPPG-h264 with batch size 4 (default), metadata is usually tuple/list
-                    if self.config.TEST.DATA.DATASET == "UBFC-rPPG-h264":
-                        subj_index = batch[2][i]
-                        sort_index = int(batch[3][i])
-
-                    if subj_index not in predictions.keys():
-                        predictions[subj_index] = dict()
-                        labels[subj_index] = dict()
-
-                    predictions[subj_index][sort_index] = student_rPPG[i]
-                    labels[subj_index][sort_index] = bvp_label[i]
+                if subj_index not in predictions.keys():
+                    predictions[subj_index] = dict()
+                    labels[subj_index] = dict()
+                predictions[subj_index][sort_index] = student_rPPG.cpu()
+                labels[subj_index][sort_index] = bvp_label.cpu()
 
         print("")
         calculate_metrics(predictions, labels, self.config)
