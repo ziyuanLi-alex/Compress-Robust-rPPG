@@ -1,0 +1,479 @@
+=> Merging a config file from configs/infer_configs/PURE_UBFC-Phys_PhysMamba_CRF/PURE_UBFC-Phys_PHYSMAMBA_CRF0.yaml
+Configuration:
+BASE: ['']
+CRF_DATASETS: []
+CRF_LEVELS: [0, 5, 10, 15, 20]
+DEVICE: cuda:0
+INFERENCE:
+  BATCH_SIZE: 4
+  EVALUATION_METHOD: FFT
+  EVALUATION_WINDOW:
+    USE_SMALLER_WINDOW: True
+    WINDOW_SIZE: 30
+  MODEL_PATH: ./final_model_release/PURE_PhysMamba_DiffNormalized.pth
+LOG:
+  PATH: runs/exp
+MODEL:
+  BIGSMALL:
+    FRAME_DEPTH: 3
+  DROP_RATE: 0.0
+  EFFICIENTPHYS:
+    FRAME_DEPTH: 10
+  FactorizePhys:
+    CHANNELS: 3
+    FRAME_NUM: 160
+    MD_FSAM: False
+    MD_INFERENCE: True
+    MD_R: 1
+    MD_RESIDUAL: True
+    MD_S: 1
+    MD_STEPS: 4
+    MD_TRANSFORM: T_KAB
+    MD_TYPE: NMF
+    TYPE: Standard
+  MESSAGE: 
+  MODEL_DIR: runs/exp/_SizeW128_SizeH128_ClipLength180_DataType_DataAugNone_LabelType_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse/PreTrainedModels
+  NAME: PhysMamba
+  PHYSFORMER:
+    DIM: 96
+    DROPOUT_RATE: 0.2
+    FF_DIM: 144
+    IMAGE_SIZE: [160, 128, 128]
+    NUM_HEADS: 4
+    NUM_LAYERS: 12
+    PATCHES: [4, 4, 4]
+    PATCH_SIZE: 4
+    PRETRAINED_PATH: 
+    THETA: 0.7
+  PHYSNET:
+    FRAME_NUM: 64
+  QAFC_PHYSFORMER:
+    DIM: 64
+    DROPOUT_RATE: 0.2
+    FF_DIM: 256
+    HIDDEN_SIZE: 128
+    IMAGE_SIZE: [160, 128, 128]
+    NUM_HEADS: 4
+    NUM_LAYERS: 12
+    PATCHES: [4, 4, 4]
+    PRETRAINED_PATH: 
+    QUALITY_CHANNELS: 64
+    THETA: 0.2
+    USE_BLOCK_PATTERN: True
+  RESUME: 
+  STVEN:
+    PRETRAINED_PATH: 
+    base_channels: 64
+    frame_length: 64
+    in_channels: 3
+    num_bitrate_levels: 5
+    num_st_blocks: 6
+    out_channels: 3
+    use_bitrate_labels: False
+  TSCAN:
+    FRAME_DEPTH: 10
+  iBVPNet:
+    CHANNELS: 3
+    FRAME_NUM: 160
+NUM_OF_GPU_TRAIN: 1
+TEST:
+  DATA:
+    BEGIN: 0.0
+    CACHED_PATH: /home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF0-cache/UBFC-PHYS-h264_SizeW128_SizeH128_ClipLength128_DataTypeDiffNormalized_DataAugNone_LabelTypeDiffNormalized_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len32_Median_face_boxFalse
+    CRF_DATASETS:
+      
+    CRF_LEVELS: [0]
+    DATASET: UBFC-PHYS-h264
+    DATA_FORMAT: NCDHW
+    DATA_PATH: /home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF0
+    DO_PREPROCESS: True
+    END: 1.0
+    EXP_DATA_NAME: UBFC-PHYS-h264_SizeW128_SizeH128_ClipLength128_DataTypeDiffNormalized_DataAugNone_LabelTypeDiffNormalized_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len32_Median_face_boxFalse
+    FILE_LIST_PATH: /home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF0-cache/DataFileLists/UBFC-PHYS-h264_SizeW128_SizeH128_ClipLength128_DataTypeDiffNormalized_DataAugNone_LabelTypeDiffNormalized_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len32_Median_face_boxFalse_0.0_1.0.csv
+    FILTERING:
+      EXCLUSION_LIST: ['s3_T1', 's8_T1', 's9_T1', 's1_T2', 's4_T2', 's6_T2', 's8_T2', 's9_T2', 's11_T2', 's12_T2', 's13_T2', 's14_T2', 's5_T3', 's8_T3', 's9_T3', 's10_T3', 's13_T3', 's14_T3']
+      SELECT_TASKS: True
+      TASK_LIST: ['T1', 'T2', 'T3']
+      USE_EXCLUSION_LIST: True
+    FOLD:
+      FOLD_NAME: 
+      FOLD_PATH: 
+    FS: 35
+    INFO:
+      EXERCISE: [True]
+      GENDER: ['']
+      GLASSER: [True]
+      HAIR_COVER: [True]
+      LIGHT: ['']
+      MAKEUP: [True]
+      MOTION: ['']
+      SKIN_COLOR: [1]
+    PREPROCESS:
+      BIGSMALL:
+        BIG_DATA_TYPE: ['']
+        RESIZE:
+          BIG_H: 144
+          BIG_W: 144
+          SMALL_H: 9
+          SMALL_W: 9
+        SMALL_DATA_TYPE: ['']
+      CHUNK_LENGTH: 128
+      CROP_FACE:
+        BACKEND: HC
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 32
+          USE_MEDIAN_FACE_BOX: False
+        DO_CROP_FACE: True
+        LARGE_BOX_COEF: 1.5
+        USE_LARGE_FACE_BOX: True
+      DATA_AUG: ['None']
+      DATA_TYPE: ['DiffNormalized']
+      DO_CHUNK: True
+      IBVP:
+        DATA_MODE: RGB
+      LABEL_TYPE: DiffNormalized
+      RESIZE:
+        H: 128
+        W: 128
+      USE_PSUEDO_PPG_LABEL: False
+  METRICS: ['MAE', 'RMSE', 'MAPE', 'Pearson', 'SNR', 'BA']
+  OUTPUT_SAVE_DIR: runs/exp/UBFC-PHYS-h264_SizeW128_SizeH128_ClipLength128_DataTypeDiffNormalized_DataAugNone_LabelTypeDiffNormalized_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len32_Median_face_boxFalse/saved_test_outputs
+  USE_LAST_EPOCH: False
+TOOLBOX_MODE: only_test
+TRAIN:
+  BATCH_SIZE: 4
+  DATA:
+    BEGIN: 0.0
+    CACHED_PATH: PreprocessedData/_SizeW128_SizeH128_ClipLength180_DataType_DataAugNone_LabelType_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse
+    CRF_DATASETS:
+      
+    CRF_LEVELS: [0]
+    DATASET: 
+    DATA_FORMAT: NDCHW
+    DATA_PATH: 
+    DO_PREPROCESS: False
+    END: 1.0
+    EXP_DATA_NAME: _SizeW128_SizeH128_ClipLength180_DataType_DataAugNone_LabelType_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse
+    FILE_LIST_PATH: PreprocessedData/DataFileLists/_SizeW128_SizeH128_ClipLength180_DataType_DataAugNone_LabelType_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse_0.0_1.0.csv
+    FILTERING:
+      EXCLUSION_LIST: ['']
+      SELECT_TASKS: False
+      TASK_LIST: ['']
+      USE_EXCLUSION_LIST: False
+    FOLD:
+      FOLD_NAME: 
+      FOLD_PATH: 
+    FS: 0
+    INFO:
+      EXERCISE: [True]
+      GENDER: ['']
+      GLASSER: [True]
+      HAIR_COVER: [True]
+      LIGHT: ['']
+      MAKEUP: [True]
+      MOTION: ['']
+      SKIN_COLOR: [1]
+    PREPROCESS:
+      BIGSMALL:
+        BIG_DATA_TYPE: ['']
+        RESIZE:
+          BIG_H: 144
+          BIG_W: 144
+          SMALL_H: 9
+          SMALL_W: 9
+        SMALL_DATA_TYPE: ['']
+      CHUNK_LENGTH: 180
+      CROP_FACE:
+        BACKEND: HC
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 30
+          USE_MEDIAN_FACE_BOX: False
+        DO_CROP_FACE: True
+        LARGE_BOX_COEF: 1.5
+        USE_LARGE_FACE_BOX: True
+      DATA_AUG: ['None']
+      DATA_TYPE: ['']
+      DO_CHUNK: True
+      IBVP:
+        DATA_MODE: RGB
+      LABEL_TYPE: 
+      RESIZE:
+        H: 128
+        W: 128
+      USE_PSUEDO_PPG_LABEL: False
+  EPOCHS: 50
+  LR: 0.0001
+  MODEL_FILE_NAME: 
+  OPTIMIZER:
+    BETAS: (0.9, 0.999)
+    EPS: 0.0001
+    MOMENTUM: 0.9
+  PLOT_LOSSES_AND_LR: True
+  QAFC:
+    PHASE1_CHECKPOINT: 
+    PHASE_BOUNDARY: 70
+    RANKING_MARGIN: 0.1
+    TRAINING_PHASE: 1
+UNSUPERVISED:
+  DATA:
+    BEGIN: 0.0
+    CACHED_PATH: PreprocessedData/_SizeW128_SizeH128_ClipLength180_DataType_DataAugNone_LabelType_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse_unsupervised
+    DATASET: 
+    DATA_FORMAT: NDCHW
+    DATA_PATH: 
+    DO_PREPROCESS: False
+    END: 1.0
+    EXP_DATA_NAME: _SizeW128_SizeH128_ClipLength180_DataType_DataAugNone_LabelType_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse_unsupervised
+    FILE_LIST_PATH: PreprocessedData/DataFileLists/_SizeW128_SizeH128_ClipLength180_DataType_DataAugNone_LabelType_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse_unsupervised_0.0_1.0.csv
+    FILTERING:
+      EXCLUSION_LIST: ['']
+      SELECT_TASKS: False
+      TASK_LIST: ['']
+      USE_EXCLUSION_LIST: False
+    FOLD:
+      FOLD_NAME: 
+      FOLD_PATH: 
+    FS: 0
+    INFO:
+      EXERCISE: [True]
+      GENDER: ['']
+      GLASSER: [True]
+      HAIR_COVER: [True]
+      LIGHT: ['']
+      MAKEUP: [True]
+      MOTION: ['']
+      SKIN_COLOR: [1]
+    PREPROCESS:
+      CHUNK_LENGTH: 180
+      CROP_FACE:
+        BACKEND: HC
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 30
+          USE_MEDIAN_FACE_BOX: False
+        DO_CROP_FACE: True
+        LARGE_BOX_COEF: 1.5
+        USE_LARGE_FACE_BOX: True
+      DATA_AUG: ['None']
+      DATA_TYPE: ['']
+      DO_CHUNK: True
+      IBVP:
+        DATA_MODE: RGB
+      LABEL_TYPE: 
+      RESIZE:
+        H: 128
+        W: 128
+      USE_PSUEDO_PPG_LABEL: False
+  METHOD: []
+  METRICS: []
+  OUTPUT_SAVE_DIR: 
+VALID:
+  DATA:
+    BEGIN: 0.0
+    CACHED_PATH: PreprocessedData/_SizeW128_SizeH128_ClipLength180_DataType_DataAugNone_LabelType_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse
+    CRF_DATASETS:
+      
+    CRF_LEVELS: [0]
+    DATASET: 
+    DATA_FORMAT: NDCHW
+    DATA_PATH: 
+    DO_PREPROCESS: False
+    END: 1.0
+    EXP_DATA_NAME: _SizeW128_SizeH128_ClipLength180_DataType_DataAugNone_LabelType_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse
+    FILE_LIST_PATH: PreprocessedData/DataFileLists/_SizeW128_SizeH128_ClipLength180_DataType_DataAugNone_LabelType_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len30_Median_face_boxFalse_0.0_1.0.csv
+    FILTERING:
+      EXCLUSION_LIST: ['']
+      SELECT_TASKS: False
+      TASK_LIST: ['']
+      USE_EXCLUSION_LIST: False
+    FOLD:
+      FOLD_NAME: 
+      FOLD_PATH: 
+    FS: 0
+    INFO:
+      EXERCISE: [True]
+      GENDER: ['']
+      GLASSER: [True]
+      HAIR_COVER: [True]
+      LIGHT: ['']
+      MAKEUP: [True]
+      MOTION: ['']
+      SKIN_COLOR: [1]
+    PREPROCESS:
+      BIGSMALL:
+        BIG_DATA_TYPE: ['']
+        RESIZE:
+          BIG_H: 144
+          BIG_W: 144
+          SMALL_H: 9
+          SMALL_W: 9
+        SMALL_DATA_TYPE: ['']
+      CHUNK_LENGTH: 180
+      CROP_FACE:
+        BACKEND: HC
+        DETECTION:
+          DO_DYNAMIC_DETECTION: False
+          DYNAMIC_DETECTION_FREQUENCY: 30
+          USE_MEDIAN_FACE_BOX: False
+        DO_CROP_FACE: True
+        LARGE_BOX_COEF: 1.5
+        USE_LARGE_FACE_BOX: True
+      DATA_AUG: ['None']
+      DATA_TYPE: ['']
+      DO_CHUNK: True
+      IBVP:
+        DATA_MODE: RGB
+      LABEL_TYPE: 
+      RESIZE:
+        H: 128
+        W: 128
+      USE_PSUEDO_PPG_LABEL: False
+
+Preprocessing dataset...
+  0%|          | 0/24 [00:00<?, ?it/s]Warning: More than one faces are detected. Only cropping the biggest one.
+  4%|▍         | 1/24 [00:35<13:38, 35.58s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+  8%|▊         | 2/24 [01:10<12:50, 35.03s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+ 12%|█▎        | 3/24 [01:45<12:19, 35.19s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+ 17%|█▋        | 4/24 [02:19<11:36, 34.83s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+ 21%|██        | 5/24 [02:54<10:58, 34.66s/it]ERROR: No Face Detected
+ 25%|██▌       | 6/24 [03:28<10:21, 34.56s/it] 29%|██▉       | 7/24 [04:04<09:54, 34.98s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+ 33%|███▎      | 8/24 [04:38<09:15, 34.71s/it] 38%|███▊      | 9/24 [05:12<08:36, 34.43s/it]ERROR: No Face Detected
+Warning: More than one faces are detected. Only cropping the biggest one.
+ 42%|████▏     | 10/24 [05:46<08:02, 34.44s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+ 46%|████▌     | 11/24 [06:22<07:31, 34.74s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+ 50%|█████     | 12/24 [06:58<07:01, 35.09s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+ 54%|█████▍    | 13/24 [07:33<06:26, 35.10s/it] 58%|█████▊    | 14/24 [08:07<05:48, 34.82s/it] 62%|██████▎   | 15/24 [08:42<05:12, 34.76s/it] 67%|██████▋   | 16/24 [09:14<04:33, 34.19s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+ 71%|███████   | 17/24 [09:24<03:08, 26.86s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+ 75%|███████▌  | 18/24 [09:58<02:53, 28.93s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+ERROR: No Face Detected
+ 79%|███████▉  | 19/24 [10:35<02:36, 31.27s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+ERROR: No Face Detected
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+ 83%|████████▎ | 20/24 [11:09<02:08, 32.24s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+ 88%|████████▊ | 21/24 [11:43<01:38, 32.76s/it]ERROR: No Face Detected
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+Warning: More than one faces are detected. Only cropping the biggest one.
+ 92%|█████████▏| 22/24 [12:17<01:06, 33.08s/it] 96%|█████████▌| 23/24 [12:53<00:33, 33.81s/it]Warning: More than one faces are detected. Only cropping the biggest one.
+100%|██████████| 24/24 [13:13<00:00, 29.68s/it]100%|██████████| 24/24 [13:13<00:00, 33.05s/it]
+Total Number of raw files preprocessed: 24
+
+Cached Data Path /home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF0-cache/UBFC-PHYS-h264_SizeW128_SizeH128_ClipLength128_DataTypeDiffNormalized_DataAugNone_LabelTypeDiffNormalized_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len32_Median_face_boxFalse
+
+File List Path /home/zyuanli/dev/lib/UBFC-Phys/UBFC-Phys-CRF0-cache/DataFileLists/UBFC-PHYS-h264_SizeW128_SizeH128_ClipLength128_DataTypeDiffNormalized_DataAugNone_LabelTypeDiffNormalized_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len32_Median_face_boxFalse_0.0_1.0.csv
+ test Preprocessed Dataset Length: 1113
+
+
+===Testing===
+Testing uses pretrained model!
+./final_model_release/PURE_PhysMamba_DiffNormalized.pth
+Running model evaluation on the testing dataset!
+  0%|                                                   | 0/279 [00:00<?, ?it/s]  0%|▏                                        | 1/279 [00:40<3:06:23, 40.23s/it]  1%|▎                                        | 2/279 [00:40<1:16:46, 16.63s/it]  1%|▌                                          | 4/279 [00:40<28:42,  6.26s/it]  2%|▉                                          | 6/279 [00:40<15:14,  3.35s/it]  3%|█▏                                         | 8/279 [00:40<09:12,  2.04s/it]  4%|█▌                                        | 10/279 [00:41<05:57,  1.33s/it]  4%|█▊                                        | 12/279 [00:41<04:01,  1.10it/s]  5%|██                                        | 14/279 [00:41<02:49,  1.56it/s]  6%|██▍                                       | 16/279 [00:41<02:02,  2.15it/s]  6%|██▋                                       | 18/279 [00:41<01:31,  2.84it/s]  7%|███                                       | 20/279 [00:42<01:11,  3.65it/s]  8%|███▎                                      | 22/279 [00:42<00:56,  4.53it/s]  9%|███▌                                      | 24/279 [00:42<00:46,  5.43it/s]  9%|███▉                                      | 26/279 [00:42<00:39,  6.34it/s] 10%|████▏                                     | 28/279 [00:42<00:35,  7.15it/s] 11%|████▌                                     | 30/279 [00:43<00:32,  7.74it/s] 11%|████▋                                     | 31/279 [00:43<00:30,  8.01it/s] 11%|████▊                                     | 32/279 [00:43<00:29,  8.25it/s] 12%|████▉                                     | 33/279 [00:43<00:28,  8.52it/s] 12%|█████                                     | 34/279 [00:43<00:28,  8.67it/s] 13%|█████▎                                    | 35/279 [00:43<00:27,  8.81it/s] 13%|█████▍                                    | 36/279 [00:43<00:27,  8.90it/s] 13%|█████▌                                    | 37/279 [00:43<00:26,  8.99it/s] 14%|█████▋                                    | 38/279 [00:43<00:26,  9.02it/s] 14%|██████                                    | 40/279 [00:44<00:25,  9.44it/s] 15%|██████▎                                   | 42/279 [00:44<00:24,  9.62it/s] 15%|██████▍                                   | 43/279 [00:44<00:24,  9.67it/s] 16%|██████▌                                   | 44/279 [00:44<00:24,  9.62it/s] 16%|██████▊                                   | 45/279 [00:44<00:24,  9.72it/s] 16%|██████▉                                   | 46/279 [00:44<00:23,  9.74it/s] 17%|███████                                   | 47/279 [00:44<00:23,  9.80it/s] 17%|███████▏                                  | 48/279 [00:44<00:23,  9.71it/s] 18%|███████▍                                  | 49/279 [00:45<00:23,  9.77it/s] 18%|███████▋                                  | 51/279 [00:45<00:23,  9.86it/s] 19%|███████▊                                  | 52/279 [00:45<00:23,  9.77it/s] 19%|███████▉                                  | 53/279 [00:45<00:23,  9.72it/s] 19%|████████▏                                 | 54/279 [00:45<00:23,  9.62it/s] 20%|████████▎                                 | 55/279 [00:45<00:23,  9.63it/s] 20%|████████▍                                 | 56/279 [00:45<00:22,  9.71it/s] 20%|████████▌                                 | 57/279 [00:45<00:22,  9.71it/s] 21%|████████▋                                 | 58/279 [00:45<00:22,  9.72it/s] 22%|█████████                                 | 60/279 [00:46<00:22,  9.82it/s] 22%|█████████▎                                | 62/279 [00:46<00:21,  9.96it/s] 23%|█████████▋                                | 64/279 [00:46<00:21, 10.05it/s] 23%|█████████▊                                | 65/279 [00:46<00:21,  9.99it/s] 24%|█████████▉                                | 66/279 [00:46<00:21,  9.92it/s] 24%|██████████                                | 67/279 [00:46<00:21,  9.88it/s] 25%|██████████▍                               | 69/279 [00:47<00:21,  9.99it/s] 25%|██████████▌                               | 70/279 [00:47<00:21,  9.92it/s] 26%|██████████▊                               | 72/279 [00:47<00:20, 10.07it/s] 26%|██████████▉                               | 73/279 [00:47<00:20, 10.05it/s] 27%|███████████▎                              | 75/279 [00:47<00:20, 10.13it/s] 28%|███████████▌                              | 77/279 [00:47<00:20, 10.00it/s] 28%|███████████▋                              | 78/279 [00:47<00:20,  9.99it/s] 29%|████████████                              | 80/279 [00:48<00:19, 10.21it/s] 29%|████████████▎                             | 82/279 [00:48<00:18, 10.46it/s] 30%|████████████▋                             | 84/279 [00:48<00:18, 10.64it/s] 31%|████████████▉                             | 86/279 [00:48<00:18, 10.70it/s] 32%|█████████████▏                            | 88/279 [00:48<00:17, 10.74it/s] 32%|█████████████▌                            | 90/279 [00:49<00:17, 10.83it/s] 33%|█████████████▊                            | 92/279 [00:49<00:17, 10.85it/s] 34%|██████████████▏                           | 94/279 [00:49<00:16, 10.92it/s] 34%|██████████████▍                           | 96/279 [00:49<00:16, 10.98it/s] 35%|██████████████▊                           | 98/279 [00:49<00:16, 10.96it/s] 36%|██████████████▋                          | 100/279 [00:50<00:16, 10.90it/s] 37%|██████████████▉                          | 102/279 [00:50<00:16, 10.98it/s] 37%|███████████████▎                         | 104/279 [00:50<00:15, 11.07it/s] 38%|███████████████▌                         | 106/279 [00:50<00:15, 11.08it/s] 39%|███████████████▊                         | 108/279 [00:50<00:15, 10.95it/s] 39%|████████████████▏                        | 110/279 [00:50<00:15, 10.95it/s] 40%|████████████████▍                        | 112/279 [00:51<00:15, 10.92it/s] 41%|████████████████▊                        | 114/279 [00:51<00:15, 10.93it/s] 42%|█████████████████                        | 116/279 [00:51<00:14, 10.88it/s] 42%|█████████████████▎                       | 118/279 [00:51<00:14, 10.89it/s] 43%|█████████████████▋                       | 120/279 [00:51<00:14, 10.95it/s] 44%|█████████████████▉                       | 122/279 [00:52<00:14, 10.92it/s] 44%|██████████████████▏                      | 124/279 [00:52<00:14, 10.91it/s] 45%|██████████████████▌                      | 126/279 [00:52<00:13, 10.95it/s] 46%|██████████████████▊                      | 128/279 [00:52<00:13, 11.00it/s] 47%|███████████████████                      | 130/279 [00:52<00:13, 10.87it/s] 47%|███████████████████▍                     | 132/279 [00:52<00:13, 10.87it/s] 48%|███████████████████▋                     | 134/279 [00:53<00:13, 10.92it/s] 49%|███████████████████▉                     | 136/279 [00:53<00:13, 10.98it/s] 49%|████████████████████▎                    | 138/279 [00:53<00:12, 11.02it/s] 50%|████████████████████▌                    | 140/279 [00:53<00:12, 11.00it/s] 51%|████████████████████▊                    | 142/279 [00:53<00:12, 11.04it/s] 52%|█████████████████████▏                   | 144/279 [00:54<00:12, 11.07it/s] 52%|█████████████████████▍                   | 146/279 [00:54<00:12, 11.05it/s] 53%|█████████████████████▋                   | 148/279 [00:54<00:11, 11.02it/s] 54%|██████████████████████                   | 150/279 [00:54<00:11, 11.02it/s] 54%|██████████████████████▎                  | 152/279 [00:54<00:11, 10.83it/s] 55%|██████████████████████▋                  | 154/279 [00:54<00:11, 10.87it/s] 56%|██████████████████████▉                  | 156/279 [00:55<00:11, 10.85it/s] 57%|███████████████████████▏                 | 158/279 [00:55<00:11, 10.84it/s] 57%|███████████████████████▌                 | 160/279 [00:55<00:10, 10.86it/s] 58%|███████████████████████▊                 | 162/279 [00:55<00:10, 10.82it/s] 59%|████████████████████████                 | 164/279 [00:55<00:10, 10.76it/s] 59%|████████████████████████▍                | 166/279 [00:56<00:10, 10.83it/s] 60%|████████████████████████▋                | 168/279 [00:56<00:10, 10.92it/s] 61%|████████████████████████▉                | 170/279 [00:56<00:09, 11.13it/s] 62%|█████████████████████████▎               | 172/279 [00:56<00:09, 11.18it/s] 62%|█████████████████████████▌               | 174/279 [00:56<00:09, 11.18it/s] 63%|█████████████████████████▊               | 176/279 [00:56<00:09, 11.26it/s] 64%|██████████████████████████▏              | 178/279 [00:57<00:08, 11.32it/s] 65%|██████████████████████████▍              | 180/279 [00:57<00:08, 11.32it/s] 65%|██████████████████████████▋              | 182/279 [00:57<00:08, 11.26it/s] 66%|███████████████████████████              | 184/279 [00:57<00:08, 11.33it/s] 67%|███████████████████████████▎             | 186/279 [00:57<00:08, 11.33it/s] 67%|███████████████████████████▋             | 188/279 [00:57<00:08, 11.28it/s] 68%|███████████████████████████▉             | 190/279 [00:58<00:07, 11.29it/s] 69%|████████████████████████████▏            | 192/279 [00:58<00:07, 11.32it/s] 70%|████████████████████████████▌            | 194/279 [00:58<00:07, 11.41it/s] 70%|████████████████████████████▊            | 196/279 [00:58<00:07, 11.35it/s] 71%|█████████████████████████████            | 198/279 [00:58<00:07, 11.33it/s] 72%|█████████████████████████████▍           | 200/279 [00:59<00:06, 11.43it/s] 72%|█████████████████████████████▋           | 202/279 [00:59<00:06, 11.37it/s] 73%|█████████████████████████████▉           | 204/279 [00:59<00:06, 11.30it/s] 74%|██████████████████████████████▎          | 206/279 [00:59<00:06, 11.25it/s] 75%|██████████████████████████████▌          | 208/279 [00:59<00:06, 11.26it/s] 75%|██████████████████████████████▊          | 210/279 [00:59<00:06, 11.31it/s] 76%|███████████████████████████████▏         | 212/279 [01:00<00:05, 11.36it/s] 77%|███████████████████████████████▍         | 214/279 [01:00<00:05, 11.37it/s] 77%|███████████████████████████████▋         | 216/279 [01:00<00:05, 11.35it/s] 78%|████████████████████████████████         | 218/279 [01:00<00:05, 11.35it/s] 79%|████████████████████████████████▎        | 220/279 [01:00<00:05, 11.29it/s] 80%|████████████████████████████████▌        | 222/279 [01:00<00:05, 11.38it/s] 80%|████████████████████████████████▉        | 224/279 [01:01<00:04, 11.28it/s] 81%|█████████████████████████████████▏       | 226/279 [01:01<00:04, 11.19it/s] 82%|█████████████████████████████████▌       | 228/279 [01:01<00:04, 11.33it/s] 82%|█████████████████████████████████▊       | 230/279 [01:01<00:04, 11.29it/s] 83%|██████████████████████████████████       | 232/279 [01:01<00:04, 11.29it/s] 84%|██████████████████████████████████▍      | 234/279 [01:02<00:03, 11.29it/s] 85%|██████████████████████████████████▋      | 236/279 [01:02<00:03, 11.40it/s] 85%|██████████████████████████████████▉      | 238/279 [01:02<00:03, 11.42it/s] 86%|███████████████████████████████████▎     | 240/279 [01:02<00:03, 11.31it/s] 87%|███████████████████████████████████▌     | 242/279 [01:02<00:03, 11.32it/s] 87%|███████████████████████████████████▊     | 244/279 [01:02<00:03, 11.39it/s] 88%|████████████████████████████████████▏    | 246/279 [01:03<00:02, 11.35it/s] 89%|████████████████████████████████████▍    | 248/279 [01:03<00:02, 11.21it/s] 90%|████████████████████████████████████▋    | 250/279 [01:03<00:02, 11.25it/s] 90%|█████████████████████████████████████    | 252/279 [01:03<00:02, 11.31it/s] 91%|█████████████████████████████████████▎   | 254/279 [01:03<00:02, 11.33it/s] 92%|█████████████████████████████████████▌   | 256/279 [01:05<00:07,  3.27it/s] 92%|█████████████████████████████████████▉   | 258/279 [01:05<00:05,  4.16it/s] 93%|██████████████████████████████████████▏  | 260/279 [01:05<00:03,  5.14it/s] 94%|██████████████████████████████████████▌  | 262/279 [01:05<00:02,  6.17it/s] 95%|██████████████████████████████████████▊  | 264/279 [01:06<00:02,  7.16it/s] 95%|███████████████████████████████████████  | 266/279 [01:06<00:01,  8.00it/s] 96%|███████████████████████████████████████▍ | 268/279 [01:06<00:01,  8.73it/s] 97%|███████████████████████████████████████▋ | 270/279 [01:06<00:00,  9.40it/s] 97%|███████████████████████████████████████▉ | 272/279 [01:06<00:00,  9.92it/s] 98%|████████████████████████████████████████▎| 274/279 [01:07<00:00, 10.34it/s] 99%|████████████████████████████████████████▌| 276/279 [01:07<00:00, 10.56it/s]100%|████████████████████████████████████████▊| 278/279 [01:07<00:00, 10.85it/s]100%|█████████████████████████████████████████| 279/279 [01:10<00:00,  3.97it/s]
+
+Calculating metrics!
+  0%|                                                    | 0/24 [00:00<?, ?it/s]  4%|█▊                                          | 1/24 [00:02<01:01,  2.68s/it]  8%|███▋                                        | 2/24 [00:06<01:09,  3.15s/it] 12%|█████▌                                      | 3/24 [00:09<01:06,  3.16s/it] 17%|███████▎                                    | 4/24 [00:12<01:03,  3.20s/it] 21%|█████████▏                                  | 5/24 [00:15<01:01,  3.24s/it] 25%|███████████                                 | 6/24 [00:17<00:49,  2.73s/it] 29%|████████████▊                               | 7/24 [00:20<00:49,  2.93s/it] 33%|██████████████▋                             | 8/24 [00:24<00:48,  3.05s/it] 38%|████████████████▌                           | 9/24 [00:27<00:46,  3.08s/it] 42%|█████████████████▉                         | 10/24 [00:31<00:49,  3.53s/it] 46%|███████████████████▋                       | 11/24 [00:35<00:44,  3.41s/it] 50%|█████████████████████▌                     | 12/24 [00:38<00:39,  3.33s/it] 54%|███████████████████████▎                   | 13/24 [00:40<00:34,  3.11s/it] 58%|█████████████████████████                  | 14/24 [00:43<00:30,  3.05s/it] 62%|██████████████████████████▉                | 15/24 [00:46<00:27,  3.06s/it] 67%|████████████████████████████▋              | 16/24 [00:49<00:23,  2.92s/it] 71%|██████████████████████████████▍            | 17/24 [00:49<00:15,  2.18s/it] 75%|████████████████████████████████▎          | 18/24 [00:52<00:13,  2.29s/it] 79%|██████████████████████████████████         | 19/24 [00:55<00:12,  2.45s/it] 83%|███████████████████████████████████▊       | 20/24 [00:58<00:10,  2.65s/it] 88%|█████████████████████████████████████▋     | 21/24 [01:01<00:08,  2.70s/it] 92%|███████████████████████████████████████▍   | 22/24 [01:05<00:06,  3.31s/it] 96%|█████████████████████████████████████████▏ | 23/24 [01:08<00:03,  3.22s/it]100%|███████████████████████████████████████████| 24/24 [01:11<00:00,  3.13s/it]100%|███████████████████████████████████████████| 24/24 [01:11<00:00,  3.00s/it]
+FFT MAE (FFT Label): 6.055043909671533 +/- 0.9840977035000678
+FFT RMSE (FFT Label): 13.013107718094208 +/- 7.4169032282017335
+FFT MAPE (FFT Label): 7.591190259683341 +/- 1.1192141371781654
+FFT Pearson (FFT Label): 0.6358780711674621 +/- 0.06642506658764406
+FFT SNR (FFT Label): -2.0380311013454557 +/- 0.4833486998359749 (dB)
+Saved PURE_PhysMamba_DiffNormalized_UBFC-PHYS-h264_FFT_BlandAltman_ScatterPlot.pdf to runs/exp/UBFC-PHYS-h264_SizeW128_SizeH128_ClipLength128_DataTypeDiffNormalized_DataAugNone_LabelTypeDiffNormalized_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len32_Median_face_boxFalse/bland_altman_plots.
+Saved PURE_PhysMamba_DiffNormalized_UBFC-PHYS-h264_FFT_BlandAltman_DifferencePlot.pdf to runs/exp/UBFC-PHYS-h264_SizeW128_SizeH128_ClipLength128_DataTypeDiffNormalized_DataAugNone_LabelTypeDiffNormalized_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len32_Median_face_boxFalse/bland_altman_plots.
+Saving outputs to: runs/exp/UBFC-PHYS-h264_SizeW128_SizeH128_ClipLength128_DataTypeDiffNormalized_DataAugNone_LabelTypeDiffNormalized_Crop_faceTrue_BackendHC_Large_boxTrue_Large_size1.5_Dyamic_DetFalse_det_len32_Median_face_boxFalse/saved_test_outputs/PURE_PhysMamba_DiffNormalized_UBFC-PHYS-h264_outputs.pickle
