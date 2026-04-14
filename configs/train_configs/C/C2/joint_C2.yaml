@@ -1,0 +1,129 @@
+# C2: CRF [0, 14, 20, 24] — moderate coverage (= A1)
+# Identical to A1 config, re-created here for C ablation integrity
+BASE: [""]
+TOOLBOX_MODE: "train_and_test"
+TRAIN:
+  BATCH_SIZE: 8
+  EPOCHS: 8
+  LR: 1e-3
+  MODEL_FILE_NAME: "C2_joint"
+  PLOT_LOSSES_AND_LR: True
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG
+    DO_PREPROCESS: True
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/root/data"
+    CRF_DATASETS:
+      "0": "/root/data/UBFC-rPPG-CRF0"
+      "14": "/root/data/UBFC-rPPG-CRF14"
+      "20": "/root/data/UBFC-rPPG-CRF20"
+      "24": "/root/data/UBFC-rPPG-CRF24"
+    CRF_LEVELS: [0, 14, 20, 24]
+    CACHED_PATH: "/root/data/UBFC-rPPG-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.0
+    END: 0.79
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        BACKEND: "HC"
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+      RESIZE:
+        H: 128
+        W: 128
+VALID:
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG
+    DO_PREPROCESS: True
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/root/data"
+    CRF_DATASETS:
+      "0": "/root/data/UBFC-rPPG-CRF0"
+      "14": "/root/data/UBFC-rPPG-CRF14"
+      "20": "/root/data/UBFC-rPPG-CRF20"
+      "24": "/root/data/UBFC-rPPG-CRF24"
+    CRF_LEVELS: [0, 14, 20, 24]
+    CACHED_PATH: "/root/data/UBFC-rPPG-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.79
+    END: 0.90
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        BACKEND: "HC"
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+      RESIZE:
+        H: 128
+        W: 128
+TEST:
+  METRICS: ["MAE", "RMSE", "MAPE", "Pearson", "SNR", "BA"]
+  USE_LAST_EPOCH: False
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG-h264
+    DO_PREPROCESS: True
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/root/data/UBFC-rPPG-CRF20"
+    CACHED_PATH: "/root/data/UBFC-rPPG-CRF20-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.90
+    END: 1.0
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        BACKEND: "HC"
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+      RESIZE:
+        H: 128
+        W: 128
+DEVICE: cuda:0
+NUM_OF_GPU_TRAIN: 1
+LOG:
+  PATH: runs/exp
+MODEL:
+  DROP_RATE: 0.2
+  NAME: JointSTPhys
+  MODEL_DIR: "./runs/exp/C/C2"
+  STVEN:
+    PRETRAINED_PATH: ""  # No pretraining — random initialization (from A conclusion)
+    in_channels: 3
+    out_channels: 3
+    base_channels: 16
+    num_st_blocks: 6
+    frame_length: 160
+    use_bitrate_labels: True
+    num_bitrate_levels: 4  # CRF [0, 14, 20, 24]
+  PHYSFORMER:
+    PRETRAINED_PATH: "/root/Compress-Robust-rPPG/final_model_release/PURE_PhysFormer_DiffNormalized.pth"
+    PATCH_SIZE: 4
+    DIM: 96
+    FF_DIM: 144
+    NUM_HEADS: 4
+    NUM_LAYERS: 12
+    THETA: 0.7
+    IMAGE_SIZE: [160, 128, 128]
+    PATCHES: [4, 4, 4]
+    DROPOUT_RATE: 0.2
+INFERENCE:
+  BATCH_SIZE: 4
+  MODEL_PATH: ""

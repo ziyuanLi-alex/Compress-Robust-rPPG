@@ -1,0 +1,65 @@
+# C1_test: Inference config for C1 on CRF 14
+BASE: [""]
+TOOLBOX_MODE: "only_test"
+TEST:
+  METRICS: ["MAE", "RMSE", "MAPE", "Pearson", "SNR", "BA"]
+  USE_LAST_EPOCH: False
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG-h264
+    DO_PREPROCESS: True
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/root/data/UBFC-rPPG-CRF14"
+    CACHED_PATH: "/root/data/UBFC-rPPG-CRF14-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.90
+    END: 1.0
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        BACKEND: "HC"
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+      RESIZE:
+        H: 128
+        W: 128
+DEVICE: cuda:0
+NUM_OF_GPU_TRAIN: 1
+LOG:
+  PATH: runs/exp
+MODEL:
+  DROP_RATE: 0.2
+  NAME: JointSTPhys
+  MESSAGE: "C1: Testing on CRF 14"
+  STVEN:
+    PRETRAINED_PATH: ""
+    in_channels: 3
+    out_channels: 3
+    base_channels: 16
+    num_st_blocks: 6
+    frame_length: 160
+    use_bitrate_labels: True
+    num_bitrate_levels: 2  # [0, 14]
+  PHYSFORMER:
+    PRETRAINED_PATH: "/root/Compress-Robust-rPPG/final_model_release/PURE_PhysFormer_DiffNormalized.pth"
+    PATCH_SIZE: 4
+    DIM: 96
+    FF_DIM: 144
+    NUM_HEADS: 4
+    NUM_LAYERS: 12
+    THETA: 0.7
+    IMAGE_SIZE: [160, 128, 128]
+    PATCHES: [4, 4, 4]
+    DROPOUT_RATE: 0.2
+INFERENCE:
+  BATCH_SIZE: 4
+  EVALUATION_METHOD: "FFT"
+  EVALUATION_WINDOW:
+    USE_SMALLER_WINDOW: True
+    WINDOW_SIZE: 30
+  MODEL_PATH: "# TODO: Update after C1 training"
