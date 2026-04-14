@@ -1,0 +1,66 @@
+# A1_test: Inference config for A1 (no pretraining, joint training only)
+# Tests the trained JointSTVEN+PhysFormer model on compressed videos
+BASE: [""]
+TOOLBOX_MODE: "only_test"
+TEST:
+  METRICS: ["MAE", "RMSE", "MAPE", "Pearson", "SNR", "BA"]
+  USE_LAST_EPOCH: False
+  DATA:
+    FS: 30
+    DATASET: UBFC-rPPG-h264
+    DO_PREPROCESS: True
+    DATA_FORMAT: NCDHW
+    DATA_PATH: "/root/data/UBFC-rPPG-CRF24"
+    CACHED_PATH: "/root/data/UBFC-rPPG-CRF24-cache"
+    EXP_DATA_NAME: ""
+    BEGIN: 0.90
+    END: 1.0
+    PREPROCESS:
+      DATA_TYPE: ["DiffNormalized"]
+      DATA_AUG: ["None"]
+      LABEL_TYPE: DiffNormalized
+      DO_CHUNK: True
+      CHUNK_LENGTH: 160
+      CROP_FACE:
+        DO_CROP_FACE: True
+        BACKEND: "HC"
+        USE_LARGE_FACE_BOX: True
+        LARGE_BOX_COEF: 1.5
+      RESIZE:
+        H: 128
+        W: 128
+DEVICE: cuda:0
+NUM_OF_GPU_TRAIN: 1
+LOG:
+  PATH: runs/exp
+MODEL:
+  DROP_RATE: 0.2
+  NAME: JointSTPhys
+  MESSAGE: "A1: No pretraining — random init, joint training only"
+  STVEN:
+    PRETRAINED_PATH: ""  # No pretraining — uses jointly trained weights
+    in_channels: 3
+    out_channels: 3
+    base_channels: 16
+    num_st_blocks: 6
+    frame_length: 160
+    use_bitrate_labels: True
+    num_bitrate_levels: 4  # CRF [0, 14, 20, 24]
+  PHYSFORMER:
+    PRETRAINED_PATH: "/root/Compress-Robust-rPPG/final_model_release/PURE_PhysFormer_DiffNormalized.pth"
+    PATCH_SIZE: 4
+    DIM: 96
+    FF_DIM: 144
+    NUM_HEADS: 4
+    NUM_LAYERS: 12
+    THETA: 0.7
+    IMAGE_SIZE: [160, 128, 128]
+    PATCHES: [4, 4, 4]
+    DROPOUT_RATE: 0.2
+INFERENCE:
+  BATCH_SIZE: 4
+  EVALUATION_METHOD: "FFT"
+  EVALUATION_WINDOW:
+    USE_SMALLER_WINDOW: True
+    WINDOW_SIZE: 30
+  MODEL_PATH: "/root/Compress-Robust-rPPG/results/checkpoints/A/A2/A2_joint_Joint_Epoch7.pth"
