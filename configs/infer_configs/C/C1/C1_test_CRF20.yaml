@@ -62,4 +62,4 @@ INFERENCE:
   EVALUATION_WINDOW:
     USE_SMALLER_WINDOW: True
     WINDOW_SIZE: 30
-  MODEL_PATH: "# TODO: Update after C1 training"
+  MODEL_PATH: "/root/Compress-Robust-rPPG/results/checkpoints/C/C1/C1_joint_Joint_Epoch5.pth"
